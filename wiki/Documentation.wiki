@@ -149,7 +149,6 @@ You can override one particular option or all.
   var newOptions = {
     domain: '*.mydomain.com',
     path: '/somedir',
-
     hoursToLive: 24,
     secure: true
   }
