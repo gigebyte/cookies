@@ -1,0 +1,59 @@
+#summary How to use jquery.cookies.js
+
+= How to use jquery.cookies.js =
+
+== Without jQuery ==
+
+If jQuery is not available in your page, the core cookies library is available to you under the _jaaulde.utils_ namespace:
+
+ * *Get a cookie*
+  * _jaaulde.utils.cookies.get('myCookie');_
+   * returns value of myCookie if it is present, null if not
+  * _jaaulde.utils.cookies.get(['myCookie', 'myOtherCookie']);_
+   * returns array containing value of each requested cookie if it is present, null if not
+  * _jaaulde.utils.cookies.get();_
+   * returns array of all cookies from your site
+
+ * *Set a cookie*
+  * _jaaulde.utils.cookies.set('myCookie', 'myValue');_
+   * sets cookie by the name of 'myCookie' to value of 'myValue' with default options
+  * _jaaulde.utils.cookies.set('myCookie', 'myValue', {path: '/somedir'});_
+   * sets cookie by the name of 'myCookie' to value of 'myValue' with path of '/somedir'
+
+ * *Delete a cookie*
+  * _jaaulde.utils.cookies.del('myCookie');_
+   * deletes a cookie, 'myCookie', with default options
+  * _jaaulde.utils.cookies.del('myCookie', {path: '/somedir'});_
+   * deletes a cookie by the name of 'myCookie' which had been set with a path of '/somedir'
+  * A cookie can only be deleted using the saem options with which it was set
+
+ * *Test if browser is accepting cookies*
+  * _jaaulde.utils.cookies.test();_
+   * attempts to set a cookie and returns true or false upon success or failure
+
+ * *Set default options to use when none are specified*
+  * _jaaulde.utils.cookies.setOptions({path: '/somedir'});_
+   * all cookies will be set or deleted with the path , '/somedir', unless it is explicitly provided in a passed options object
+
+== With jQuery ==
+
+If jQuery is available, then all of the above methods are available to you under the _jQuery.cookies_ (or _$.cookies_ ) namespace:
+ * _$.cookies.get()_
+ * _$.cookies.set()_
+ * _$.cookies.del()_
+ * _$.cookies.test()_
+ * _$.cookies.setOptions()_
+
+In addition, there are some jQuery function additions for helping automate some cookie tasks:
+
+ * *Set the value of an input to a cookie named after the input's name or id attribute*
+  * _$('#username').cookify();_
+   * The value of the input with id "username" is set to a cookie named after the name or id attribute of that input element
+
+ * *Fill an input or textarea's value, or an element's innerHTML with the value of a cookie*
+  * _$('#username').cookieFill();_
+   * Set the value of the input with id, 'username', to the value of a cookie by the same name
+
+ * *Bind an input to the cookies library*
+  * _$('#username').cookieBind();_
+   * Fills the input with id, 'username' with the cookie named the same, and sets the input's change event to fire cookify() to update the cookie when the input value changes
