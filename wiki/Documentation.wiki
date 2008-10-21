@@ -7,34 +7,90 @@
 
 If jQuery is not available in your page, the core cookies library is available to you under the _jaaulde.utils_ namespace:
 
- * *Get a cookie*
-  * `jaaulde.utils.cookies.get('myCookie');`
-   * returns value of myCookie if it is present, null if not
-  * `jaaulde.utils.cookies.get(['myCookie', 'myOtherCookie']);`
-   * returns array containing value of each requested cookie if it is present, null if not
-  * `jaaulde.utils.cookies.get();`
-   * returns array of all cookies from your site
+=== Get a cookie ===
+{{{
+/**
+ * get - get one, several, or all cookies
+ *
+ * @access public
+ * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
+ * @return Mixed - String:if single cookie requested and found; Null:if single cookie requested and not found; Object:hash of multiple or all cookies
+ */
+get = function(cookieName)
+}}}
+ * `jaaulde.utils.cookies.get('myCookie');`
+  * returns value of myCookie if it is present, null if not
+ * `jaaulde.utils.cookies.get(['myCookie', 'myOtherCookie']);`
+  * returns array containing value of each requested cookie if it is present, null if not
+ * `jaaulde.utils.cookies.get();`
+  * returns array of all cookies from your site
 
- * *Set a cookie*
-  * `jaaulde.utils.cookies.set('myCookie', 'myValue');`
-   * sets cookie by the name of 'myCookie' to value of 'myValue' with default options
-  * `jaaulde.utils.cookies.set('myCookie', 'myValue', {path: '/somedir'});`
-   * sets cookie by the name of 'myCookie' to value of 'myValue' with path of '/somedir'
+=== Set a cookie ===
+{{{
+/**
+ * set - set or delete a cookie with desired options
+ *
+ * @access public
+ * @paramater String cookieName - name of cookie to set
+ * @paramater Mixed value - Null:if deleting, String:value to assign cookie if setting
+ * @paramater Object options - optional list of cookie options to specify
+ * @return void
+ */
+set = function(cookieName, value, options)
+}}}
+ * `jaaulde.utils.cookies.set('myCookie', 'myValue');`
+  * sets cookie by the name of 'myCookie' to value of 'myValue' with default options
+ * `jaaulde.utils.cookies.set('myCookie', 'myValue', {path: '/somedir'});`
+  * sets cookie by the name of 'myCookie' to value of 'myValue' with path of '/somedir'
+ * *See information on options object below*
 
- * *Delete a cookie*
-  * `jaaulde.utils.cookies.del('myCookie');`
-   * deletes a cookie, 'myCookie', with default options
-  * `jaaulde.utils.cookies.del('myCookie', {path: '/somedir'});`
-   * deletes a cookie by the name of 'myCookie' which had been set with a path of '/somedir'
-  * A cookie can only be deleted using the saem options with which it was set
+=== Delete a cookie ===
+{{{
+/**
+ * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
+ *
+ * @access public
+ * @paramater String cookieName - name of cookie to delete
+ * @paramater Object options - optional list of cookie options to specify
+ * @return void
+ */
+del = function(cookieName, options)
+}}}
+ * `jaaulde.utils.cookies.del('myCookie');`
+  * deletes a cookie, 'myCookie', with default options
+ * `jaaulde.utils.cookies.del('myCookie', {path: '/somedir'});`
+  * deletes a cookie by the name of 'myCookie' which had been set with a path of '/somedir'
+ * A cookie can only be deleted using the same options with which it was set
+ * *See information on options object below*
 
- * *Test if browser is accepting cookies*
-  * `jaaulde.utils.cookies.test();`
-   * attempts to set a cookie and returns true or false upon success or failure
 
- * *Set default options to use when none are specified*
-  * `jaaulde.utils.cookies.setOptions({path: '/somedir'});`
-   * all cookies will be set or deleted with the path , '/somedir', unless it is explicitly provided in a passed options object
+=== Test if browser is accepting cookies===
+{{{
+/**
+ * test - test whether the browser is accepting cookies
+ *
+ * @access public
+ * @return Boolean
+ */
+test = function()
+}}}
+ * `jaaulde.utils.cookies.test();`
+  * attempts to set a cookie and returns true or false upon success or failure
+
+=== Set default options to use when none are specified ===
+{{{
+/**
+ * setOptions - set default options for calls to cookie methods
+ *
+ * @access public
+ * @param Object options - list of cookie options to specify
+ * @return void
+ */
+setOptions = function(options)
+}}}
+ * `jaaulde.utils.cookies.setOptions({path: '/somedir'});`
+  * all cookies will be set or deleted with the path , '/somedir', unless it is explicitly provided in a passed options object
+ * *See information on options object below*
 
 == With jQuery ==
 
@@ -58,3 +114,45 @@ In addition, there are some jQuery function additions for helping automate some 
  * *Bind an input to the cookies library*
   * `$('#username').cookieBind();`
    * Fills the input with id, 'username' with the cookie named the same, and sets the input's change event to fire cookify() to update the cookie when the input value changes
+
+== Options object ==
+
+Cookies can be set with several options such as the domain and or path for which the cookie should be available, expiration date for the cookie, and whether the cookie should be sent over HTTPS only.  This library has default options for these:
+ * *domain*
+  * whatever _window.location.host_ holds
+ * *path*
+  * /
+ * *expiration*
+  * none set--causes cookie to be deleted at end of browser session
+ * *secure* (send over HTTPS only)
+  * false
+
+An options object can be passed with `set()`, `del()`, `cookify()`, and `cookieBind()` to override the defaults on a case by case basis.  You can also pass an options object to `setOptions()` to override the defaults for all calls.
+
+The options object has four properties:
+  * *domain*
+   * STRING
+   * exactly as described above--for which domain should the cookie be available
+  * *path*
+   * STRING
+   * exactly as described above--for which path should the cookie be available
+  * *hoursToLive*
+   * INT
+   * for how many hours should the cookie be valid (0 is same as delete at end of session which is default, negative values will delete but you should use the del() method instead)?
+  * *secure*
+   * BOOL
+   * should cookie be sent via HTTPS _only_?
+
+You can override one particular option or all.
+
+{{{
+  var newOptions = {
+    domain: '*.mydomain.com',
+    path: '/somedir',
+
+    hoursToLive: 24,
+    secure: true
+  }
+}}}
+
+*IMPORTANT NOTE:* Cookies must be deleted using the same domain and path options with which they were set.  Else the cookie will not delete.  This is just how cookies work.
