@@ -97,7 +97,7 @@ jaaulde.utils.cookies = (function()
 			pair = separated[i].split('=');
 			name = pair[0].replace(/^\s*/, '').replace(/\s*$/, '');
 			value = unescape(pair[1]);
-			cookies[name] = unescape(value);
+			cookies[name] = value;
 		}
 		return cookies;
 	};
