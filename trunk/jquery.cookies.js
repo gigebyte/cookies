@@ -96,7 +96,7 @@ jaaulde.utils.cookies = (function()
 		{
 			pair = separated[i].split('=');
 			name = pair[0].replace(/^\s*/, '').replace(/\s*$/, '');
-			value = unescape(pair[1]);
+			value = decodeURIComponent(pair[1]);
 			cookies[name] = value;
 		}
 		return cookies;
@@ -159,7 +159,7 @@ jaaulde.utils.cookies = (function()
 		
 		var optionsString = assembleOptionsString(options);
 
-		document.cookie = cookieName + '=' + escape(value) + optionsString;
+		document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
 	};
 	/**
 	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
