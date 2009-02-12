@@ -14,9 +14,9 @@ jaaulde.utils.cookies = (function()
 	var cookies = [];
 
 	var defaultOptions = {
-		hoursToLive: 0,
+		hoursToLive: null,
 		path: '/',
-		domain:  window.location.hostname,
+		domain:  null,
 		secure: false
 	};
 	/**
@@ -38,13 +38,13 @@ jaaulde.utils.cookies = (function()
 		else
 		{
 			returnValue = {
-				hoursToLive: (typeof options.hoursToLive === 'number' ? options.hoursToLive : defaultOptions.hoursToLive),
+				hoursToLive: (typeof options.hoursToLive === 'number' && options.hoursToLive > 0 ? options.hoursToLive : defaultOptions.hoursToLive),
 				path: (typeof options.path === 'string' && options.path != '' ? options.path : defaultOptions.path),
 				domain: (typeof options.domain === 'string' && options.domain != '' ? options.domain : defaultOptions.domain),
-				secure: (typeof options.secure === 'boolean' && options.secure != '' ? options.secure : defaultOptions.secure)
+				secure: (typeof options.secure === 'boolean' && options.secure ? options.secure : defaultOptions.secure)
 			};
 		}
-		
+
 		return returnValue;
 	};
 	/**
@@ -60,10 +60,10 @@ jaaulde.utils.cookies = (function()
 		options = resolveOptions(options);
 
 		return (
-			(options.hoursToLive !== 0 ? '; expires='+expiresGMTString(options.hoursToLive) : '') + 
+			(typeof options.hoursToLive == 'number' ? '; expires='+expiresGMTString(options.hoursToLive) : '') +
 			'; path=' + options.path +
-			'; domain=' + options.domain +
-			(options.secure ? '; secure' : '')
+			(typeof options.domain === 'string' ? '; domain=' + options.domain : '') +
+			(options.secure === true ? '; secure' : '')
 		);
 	};
 	/**
