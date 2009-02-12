@@ -1,11 +1,10 @@
 /**
- * Copyright (c) 2005 - 2008, James Auldridge
+ * Copyright (c) 2005 - 2009, James Auldridge
  * All rights reserved.
  *
  * Licensed under the BSD, MIT, and GPL (your choice!) Licenses:
  *  http://code.google.com/p/cookies/wiki/License
  *
- * Version 2.0
  */
 var jaaulde = window.jaaulde || {};
 jaaulde.utils = jaaulde.utils || {};
