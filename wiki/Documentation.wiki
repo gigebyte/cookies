@@ -119,7 +119,7 @@ In addition, there are some jQuery function additions for helping automate some 
 
 Cookies can be set with several options such as the domain and or path for which the cookie should be available, expiration date for the cookie, and whether the cookie should be sent over HTTPS only.  This library has default options for these:
  * *domain*
-  * whatever _window.location.host_ holds
+  * no value - will cause current domain of current page to be used
  * *path*
   * /
  * *expiration*
