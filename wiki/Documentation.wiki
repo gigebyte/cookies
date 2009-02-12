@@ -123,7 +123,7 @@ Cookies can be set with several options such as the domain and or path for which
  * *path*
   * /
  * *expiration*
-  * none set--causes cookie to be deleted at end of browser session
+  * no value--causes cookie to be deleted at end of browser session
  * *secure* (send over HTTPS only)
   * false
 
