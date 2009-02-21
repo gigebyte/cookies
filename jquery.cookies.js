@@ -37,14 +37,29 @@ jaaulde.utils.cookies = ( function()
 		else
 		{
 			returnValue = {
-				hoursToLive: ( typeof options.hoursToLive === 'number' && options.hoursToLive != 0 ? options.hoursToLive : defaultOptions.hoursToLive ),
-				path: ( typeof options.path === 'string' && options.path != '' ? options.path : defaultOptions.path ),
-				domain: ( typeof options.domain === 'string' && options.domain != '' ? options.domain : defaultOptions.domain ),
+				hoursToLive: ( typeof options.hoursToLive === 'number' && options.hoursToLive !== 0 ? options.hoursToLive : defaultOptions.hoursToLive ),
+				path: ( typeof options.path === 'string' && options.path !== '' ? options.path : defaultOptions.path ),
+				domain: ( typeof options.domain === 'string' && options.domain !== '' ? options.domain : defaultOptions.domain ),
 				secure: ( typeof options.secure === 'boolean' && options.secure ? options.secure : defaultOptions.secure )
 			};
 		}
 
 		return returnValue;
+	};
+	/**
+	 * expiresGMTString - add given number of hours to current date/time and convert to GMT string
+	 *
+	 * @access private
+	 * @static
+	 * @parameter Integer hoursToLive - number of hours for which cookie should be valid
+	 * @return String - GMT time representing current date/time plus number of hours given
+	 */
+	var expiresGMTString = function( hoursToLive )
+	{
+		var dateObject = new Date();
+		dateObject.setTime( dateObject.getTime() + ( hoursToLive * 60 * 60 * 1000 ) ) ;
+
+		return dateObject.toGMTString();
 	};
 	/**
 	 * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
@@ -66,21 +81,6 @@ jaaulde.utils.cookies = ( function()
 		);
 	};
 	/**
-	 * expiresGMTString - add given number of hours to current date/time and convert to GMT string
-	 *
-	 * @access private
-	 * @static
-	 * @parameter Integer hoursToLive - number of hours for which cookie should be valid
-	 * @return String - GMT time representing current date/time plus number of hours given
-	 */
-	var expiresGMTString = function( hoursToLive )
-	{
-		var dateObject = new Date();
-		dateObject.setTime( dateObject.getTime() + ( hoursToLive * 60 * 60 * 1000 ) ) ;
-
-		return dateObject.toGMTString();
-	};
-	/**
 	 * splitCookies - retrieve document.cookie string and break it into a hash
 	 *
 	 * @access private
@@ -90,7 +90,7 @@ jaaulde.utils.cookies = ( function()
 	var splitCookies = function()
 	{
 		cookies = [];
-		var pair, name, separated = document.cookie.split( ';' );
+		var pair, name, value, separated = document.cookie.split( ';' );
 		for( var i = 0; i < separated.length; i++ )
 		{
 			pair = separated[i].split( '=' );
@@ -125,7 +125,14 @@ jaaulde.utils.cookies = ( function()
 			returnValue = [];
 			for( var item in cookieName )
 			{
-				returnValue[cookieName[item]] = ( typeof cookies[cookieName[item]] !== 'undefined' ) ? cookies[cookieName[item]] : null;
+				if( typeof cookies[cookieName[item]] !== 'undefined' )
+				{
+					returnValue[cookieName[item]] = cookies[cookieName[item]];
+				}
+				else
+				{
+					returnValue[cookieName[item]] = null;
+				}
 			}
 		}
 		else
@@ -153,7 +160,7 @@ jaaulde.utils.cookies = ( function()
 			cookieNameRegExp = new RegExp( cookieNameRegExp );
 		}
 
-		for( cookieName in cookies )
+		for( var cookieName in cookies )
 		{
 			if( cookieName.match( cookieNameRegExp ) )
 			{
@@ -162,7 +169,7 @@ jaaulde.utils.cookies = ( function()
 		}
 
 		return returnValue;
-	}
+	};
 	/**
 	 * set - set or delete a cookie with desired options
 	 *
@@ -239,115 +246,118 @@ jaaulde.utils.cookies = ( function()
 		}
 
 		defaultOptions = resolveOptions( options );
-	}
+	};
 
 	return new constructor();
 } )();
 
-
 ( function()
 {
-	if( typeof jQuery !== 'undefined' )
+	if( window.jQuery )
 	{
-		jQuery.cookies = jaaulde.utils.cookies;
-
-		var extensions = {
-			/**
-			 * $( 'selector' ).cookify - set the value of an input field to a cookie by the name or id of the field (radio and checkbox not supported)
-			 *
-			 * @access public
-			 * @param Object options - list of cookie options to specify
-			 * @return Object jQuery
-			 */
-			cookify: function( options )
-			{
-				return this.each( function()
-				{
-					var name = '', value = '', nameAttrs = ['name', 'id'], iteration = 0, inputType;
-
-					while( iteration < nameAttrs.length && ( typeof name !== 'string' || name === '' ) )
-					{
-						name = jQuery( this ).attr( nameAttrs[iteration] );
-						iteration++;
-					}
-
-					if( typeof name === 'string' || name !== '' )
-					{
-						inputType = jQuery( this ).attr( 'type' ).toLowerCase();
-						if( inputType !== 'radio' && inputType !== 'checkbox' )
-						{
-							value = jQuery( this ).attr( 'value' );
-							if( typeof value !== 'string' || value === '' )
-							{
-								value = null;
-							}
-							jQuery.cookies.set( name, value, options );
-						}
-					}
-
-					iteration = 0;
-				} );
-			},
-			/**
-			 * $( 'selector' ).cookieFill - set the value of an input field or the innerHTML of an element from a cookie by the name or id of the field or element
-			 *
-			 * @access public
-			 * @return Object jQuery
-			 */
-			cookieFill: function()
-			{
-				return this.each( function()
-				{
-					var name = '', value, nameAttrs = ['name', 'id'], iteration = 0, nodeType;
-
-					while( iteration < nameAttrs.length && ( typeof name !== 'string' || name === '' ) )
-					{
-						name = jQuery( this ).attr( nameAttrs[iteration] );
-						iteration++;
-					}
-
-					if( typeof name === 'string' && name !== '' )
-					{
-						value = jQuery.cookies.get( name );
-						if( value !== null )
-						{
-							nodeType = this.nodeName.toLowerCase();
-							if( nodeType === 'input' || nodeType === 'textarea' )
-							{
-									jQuery( this ).attr( 'value', value );
-							}
-							else
-							{
-								jQuery( this ).html( value );
-							}
-						}
-					}
-
-					iteration = 0;
-				} );
-			},
-			/**
-			 * $( 'selector' ).cookieBind - call cookie fill on matching elements, and bind their change events to cookify()
-			 *
-			 * @access public
-			 * @param Object options - list of cookie options to specify
-			 * @return Object jQuery
-			 */
-			cookieBind: function( options )
-			{
-				return this.each( function()
-				{
-					$( this ).cookieFill().change( function()
-					{
-						$( this ).cookify( options );
-					} );
-				} );
-			}
-		};
-
-		jQuery.each( extensions, function( i )
+		( function( $ )
 		{
-			jQuery.fn[i] = this;
-		} );
+			$.cookies = jaaulde.utils.cookies;
+
+			var extensions = {
+				/**
+				 * $( 'selector' ).cookify - set the value of an input field to a cookie by the name or id of the field (radio and checkbox not supported)
+				 *
+				 * @access public
+				 * @param Object options - list of cookie options to specify
+				 * @return Object jQuery
+				 */
+				cookify: function( options )
+				{
+					return this.each( function()
+					{
+						var name = '', value = '', nameAttrs = ['name', 'id'], iteration = 0, inputType;
+
+						while( iteration < nameAttrs.length && ( typeof name !== 'string' || name === '' ) )
+						{
+							name = $( this ).attr( nameAttrs[iteration] );
+							iteration++;
+						}
+
+						if( typeof name === 'string' || name !== '' )
+						{
+							inputType = $( this ).attr( 'type' ).toLowerCase();
+							if( inputType !== 'radio' && inputType !== 'checkbox' )
+							{
+								value = $( this ).attr( 'value' );
+								if( typeof value !== 'string' || value === '' )
+								{
+									value = null;
+								}
+								$.cookies.set( name, value, options );
+							}
+						}
+
+						iteration = 0;
+					} );
+				},
+				/**
+				 * $( 'selector' ).cookieFill - set the value of an input field or the innerHTML of an element from a cookie by the name or id of the field or element
+				 *
+				 * @access public
+				 * @return Object jQuery
+				 */
+				cookieFill: function()
+				{
+					return this.each( function()
+					{
+						var name = '', value, nameAttrs = ['name', 'id'], iteration = 0, nodeType;
+
+						while( iteration < nameAttrs.length && ( typeof name !== 'string' || name === '' ) )
+						{
+							name = $( this ).attr( nameAttrs[iteration] );
+							iteration++;
+						}
+
+						if( typeof name === 'string' && name !== '' )
+						{
+							value = $.cookies.get( name );
+							if( value !== null )
+							{
+								nodeType = this.nodeName.toLowerCase();
+								if( nodeType === 'input' || nodeType === 'textarea' )
+								{
+										$( this ).attr( 'value', value );
+								}
+								else
+								{
+									$( this ).html( value );
+								}
+							}
+						}
+
+						iteration = 0;
+					} );
+				},
+				/**
+				 * $( 'selector' ).cookieBind - call cookie fill on matching elements, and bind their change events to cookify()
+				 *
+				 * @access public
+				 * @param Object options - list of cookie options to specify
+				 * @return Object jQuery
+				 */
+				cookieBind: function( options )
+				{
+					return this.each( function()
+					{
+						$( this ).cookieFill().change( function()
+						{
+							$( this ).cookify( options );
+						} );
+					} );
+				}
+			};
+
+			$.each( extensions, function( i )
+			{
+				$.fn[i] = this;
+			} );
+
+		} )( window.jQuery );
 	}
 } )();
