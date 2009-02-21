@@ -136,6 +136,34 @@ jaaulde.utils.cookies = ( function()
 		return returnValue;
 	};
 	/**
+	 * filter - get array of cookies whose names match the provided RegExp
+	 *
+	 * @access public
+	 * @paramater Object RegExp - The regular expression to match against cookie names
+	 * @return Mixed - Object:hash of cookies whose names match the RegExp
+	 */
+	constructor.prototype.filter = function( cookieNameRegExp )
+	{
+		var returnValue = {};
+
+		splitCookies();
+
+		if( typeof cookieNameRegExp === 'string' )
+		{
+			cookieNameRegExp = new RegExp( cookieNameRegExp );
+		}
+
+		for( cookieName in cookies )
+		{
+			if( cookieName.match( cookieNameRegExp ) )
+			{
+				returnValue[cookieName] = cookies[cookieName];
+			}
+		}
+
+		return returnValue;
+	}
+	/**
 	 * set - set or delete a cookie with desired options
 	 *
 	 * @access public
