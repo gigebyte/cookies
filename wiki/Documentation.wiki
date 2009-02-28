@@ -117,7 +117,34 @@ In addition, there are some jQuery function additions for helping automate some 
 
 == Options object ==
 
-Cookies can be set with several options such as the domain and or path for which the cookie should be available, expiration date for the cookie, and whether the cookie should be sent over HTTPS only.  This library has default options for these:
+Using the options object, cookies can be set with several options such as the domain and or path for which the cookie should be available, expiration date for the cookie, and whether the cookie should be sent over HTTPS only.  
+
+The options object has four properties:
+  * *domain*
+   * STRING
+   * For which domain should the cookie be available
+  * *path*
+   * STRING
+   * For which path should the cookie be available
+  * *hoursToLive*
+   * NUMBER
+   * For how many hours should the cookie be valid (0 is same as delete at end of session which is default, negative values will delete but you should use the del() method instead)?
+  * *secure*
+   * BOOL
+   * Should cookie be sent to server via HTTPS _only_?
+
+The structure of the object is as folloews:
+
+{{{
+  var newOptions = {
+    domain: '*.mydomain.com',
+    path: '/somedir',
+    hoursToLive: 24,
+    secure: true
+  }
+}}}
+
+The default options when not overridden are:
  * *domain*
   * no value - will cause current domain of current page to be used
  * *path*
@@ -128,30 +155,5 @@ Cookies can be set with several options such as the domain and or path for which
   * false
 
 An options object can be passed with `set()`, `del()`, `cookify()`, and `cookieBind()` to override the defaults on a case by case basis.  You can also pass an options object to `setOptions()` to override the defaults for all calls.
-
-The options object has four properties:
-  * *domain*
-   * STRING
-   * exactly as described above--for which domain should the cookie be available
-  * *path*
-   * STRING
-   * exactly as described above--for which path should the cookie be available
-  * *hoursToLive*
-   * INT
-   * for how many hours should the cookie be valid (0 is same as delete at end of session which is default, negative values will delete but you should use the del() method instead)?
-  * *secure*
-   * BOOL
-   * should cookie be sent via HTTPS _only_?
-
-You can override one particular option or all.
-
-{{{
-  var newOptions = {
-    domain: '*.mydomain.com',
-    path: '/somedir',
-    hoursToLive: 24,
-    secure: true
-  }
-}}}
 
 *IMPORTANT NOTE:* Cookies must be deleted using the same domain and path options with which they were set.  Else the cookie will not delete.  This is just how cookies work.
