@@ -128,12 +128,12 @@ The options object has four properties:
    * For which path should the cookie be available
   * *hoursToLive*
    * NUMBER
-   * For how many hours should the cookie be valid (0 is same as delete at end of session which is default, negative values will delete but you should use the del() method instead)?
+   * For how many hours should the cookie be valid? (Passing 0 means to delete the cookie at the end of the browser session--this is default.  Negative values will delete the cookie, but you should use the del() method instead.)
   * *secure*
    * BOOL
    * Should cookie be sent to server via HTTPS _only_?
 
-The structure of the object is as folloews:
+The structure of the object is as follows:
 
 {{{
   var newOptions = {
@@ -143,6 +143,8 @@ The structure of the object is as folloews:
     secure: true
   }
 }}}
+
+You need only set those options which you desire to override.
 
 The default options when not overridden are:
  * *domain*
