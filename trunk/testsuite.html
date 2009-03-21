@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>Testing Cookies</title>
+		<script type="text/javascript" src="../externals/jquery-1.3.1.min.js"></script>
+		<script type="text/javascript" src="jquery.cookies.js"></script>
+	</head>
+	<body>
+		<h1>Object Oriented Javascript Cookie Handling Library with jQuery bindings</h1>
+		<h2>FireUnit Test Suite</h2>
+		<p>There is no content of value in this document.  Open in Firefox installation which has Firebug and FireUnit installed.  <em>Open Firebug and click the 'test' tab to review tests.</em></p>
+
+		<div>
+			<form id="testform" action="" method="post">
+					<input type="text" name="testinput" id="testinput" value="" />
+			</form>
+		</div>
+
+
+		<script type="text/javascript">
+			( function()
+			{
+				if( window.fireunit )
+				{
+					( function( fireunit )
+					{
+						//Testing presence of namespaces
+						fireunit.compare( typeof window.jaaulde, 'object', 'Is jaaulde namespace loaded?' );
+						fireunit.compare( typeof window.jaaulde.utils, 'object', 'Is window.jaaulde.utils namespace loaded?' );
+						fireunit.compare( typeof window.jaaulde.utils.cookies, 'object', 'Is window.jaaulde.utils.cookies loaded?' );
+						//Check that jQuery extension-ization took place
+						fireunit.compare( typeof $.cookies, 'object', 'Is cookies loaded in under jQuery?' );
+						//Check presence of public methods under own namespace and jQuery
+						fireunit.compare( typeof window.jaaulde.utils.cookies.get, 'function', 'Is get() method present in namespace?' );
+						fireunit.compare( typeof $.cookies.get, 'function', 'Is get() method present in jQ?' );
+						fireunit.compare( typeof window.jaaulde.utils.cookies.set, 'function', 'Is set() method present in namespace?' );
+						fireunit.compare( typeof $.cookies.set, 'function', 'Is set() method present in jQ?' );
+						fireunit.compare( typeof window.jaaulde.utils.cookies.filter, 'function', 'Is filter() method present in namespace?' );
+						fireunit.compare( typeof $.cookies.filter, 'function', 'Is filter() method present in jQ?' );
+						fireunit.compare( typeof window.jaaulde.utils.cookies.del, 'function', 'Is del() method present in namespace?' );
+						fireunit.compare( typeof $.cookies.del, 'function', 'Is del() method present in jQ?' );
+						fireunit.compare( typeof window.jaaulde.utils.cookies.test, 'function', 'Is test() method present in namespace?' );
+						fireunit.compare( typeof $.cookies.test, 'function', 'Is test() method present in jQ?' );
+						fireunit.compare( typeof window.jaaulde.utils.cookies.setOptions, 'function', 'Is setoptions() method present in namespace?' );
+						fireunit.compare( typeof $.cookies.setOptions, 'function', 'Is setoptions() method present in jQ?' );
+						//Test for jQ extension methods
+						fireunit.compare( typeof $.fn.cookify, 'function', 'Is cookify() jQ extension method present?' );
+						fireunit.compare( typeof $.fn.cookieFill, 'function', 'Is cookieFill() jQ extension method present?' );
+						fireunit.compare( typeof $.fn.cookieBind, 'function', 'Is cookieBind() jQ extension method present?' );
+
+						//Start into real testing of the library
+
+						//Does this browser accept cookies?
+						fireunit.compare( true, $.cookies.test(), 'Does this browser accept cookies?' );
+						//Does a cookie always return as set?
+						var testcookielist = {
+							test1: 'value1',
+							test2: 'name=value&name1=value1&name2=value2',
+							test3: 'I am a very long cookie valuehyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefd'
+						};
+						for( name in testcookielist )
+						{
+							$.cookies.set( name, testcookielist[name] );
+							fireunit.compare( $.cookies.get( name ), testcookielist[name], 'Did cookie, ' + name + ', set()/get() return proper value?' );
+						}
+						//Do cookies get deleted properly?
+						for( name in testcookielist )
+						{
+							$.cookies.del( name );
+							fireunit.compare( $.cookies.get( name ), null, 'Did cookie, ' + name + ', del() remove the value?' );
+						}
+						
+						fireunit.testDone();
+
+					} )( window.fireunit );
+				}
+			} )();
+		</script>
+	</body>
+</html>
