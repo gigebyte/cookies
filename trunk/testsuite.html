@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
 		<title>Testing Cookies</title>
@@ -13,7 +12,11 @@
 
 		<div>
 			<form id="testform" action="" method="post">
-					<input type="text" name="testinput" id="testinput" value="" />
+					<p><input type="text" name="testCookify" id="testCookify" value="" /></p>
+					
+					<p><input type="text" name="testCookieFill" id="testCookieFill" value="" /></p>
+					
+					<p><input type="text" name="testCookieBind" id="testCookieBind" value="" /></p>
 			</form>
 		</div>
 
@@ -25,13 +28,13 @@
 				{
 					( function( fireunit )
 					{
-						//Testing presence of namespaces
+					//Testing presence of namespaces
 						fireunit.compare( typeof window.jaaulde, 'object', 'Is jaaulde namespace loaded?' );
 						fireunit.compare( typeof window.jaaulde.utils, 'object', 'Is window.jaaulde.utils namespace loaded?' );
 						fireunit.compare( typeof window.jaaulde.utils.cookies, 'object', 'Is window.jaaulde.utils.cookies loaded?' );
-						//Check that jQuery extension-ization took place
+					//Check that jQuery extension-ization took place
 						fireunit.compare( typeof $.cookies, 'object', 'Is cookies loaded in under jQuery?' );
-						//Check presence of public methods under own namespace and jQuery
+					//Check presence of public methods under own namespace and jQuery
 						fireunit.compare( typeof window.jaaulde.utils.cookies.get, 'function', 'Is get() method present in namespace?' );
 						fireunit.compare( typeof $.cookies.get, 'function', 'Is get() method present in jQ?' );
 						fireunit.compare( typeof window.jaaulde.utils.cookies.set, 'function', 'Is set() method present in namespace?' );
@@ -44,33 +47,48 @@
 						fireunit.compare( typeof $.cookies.test, 'function', 'Is test() method present in jQ?' );
 						fireunit.compare( typeof window.jaaulde.utils.cookies.setOptions, 'function', 'Is setoptions() method present in namespace?' );
 						fireunit.compare( typeof $.cookies.setOptions, 'function', 'Is setoptions() method present in jQ?' );
-						//Test for jQ extension methods
+					//Test for jQ extension methods
 						fireunit.compare( typeof $.fn.cookify, 'function', 'Is cookify() jQ extension method present?' );
 						fireunit.compare( typeof $.fn.cookieFill, 'function', 'Is cookieFill() jQ extension method present?' );
 						fireunit.compare( typeof $.fn.cookieBind, 'function', 'Is cookieBind() jQ extension method present?' );
 
-						//Start into real testing of the library
+				//Start into real testing of the library
 
-						//Does this browser accept cookies?
+					//Does this browser accept cookies?
 						fireunit.compare( true, $.cookies.test(), 'Does this browser accept cookies?' );
-						//Does a cookie always return as set?
+					//Does getting a cookie which has not been set return null
+						fireunit.compare( null, $.cookies.get( 'neverbeenset' ), 'Does get() of a non-existant cookie return null?' );
+					//Does a cookie always return as set?
 						var testcookielist = {
 							test1: 'value1',
-							test2: 'name=value&name1=value1&name2=value2',
-							test3: 'I am a very long cookie valuehyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefd'
+							test2: 'name=value&amp;name1=value1&amp;name2=value2',
+							test3: 'I am a long cookie value hyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefd',
+							test4: 'I am a very long cookie value hyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefdbhufghhgf65t4rt7676^^6546fygshgdgdvut^%$5erfgUUhy8761dbhjfbhvcdszX%^%$%$%DFGHGYUTYR%$EDRFVFDcghvfdxcvjhbvcfgxdsxcghv hyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefdbhufghhgf65t4rt7676^^6546fygshgdgdvut^%$5erfgUUhy8761dbhjfbhvcdszX%^%$%$%DFGHGYUTYR%$EDRFVFDcghvfdxcvjhbvcfgxdsxcghv'
 						};
 						for( name in testcookielist )
 						{
 							$.cookies.set( name, testcookielist[name] );
-							fireunit.compare( $.cookies.get( name ), testcookielist[name], 'Did cookie, ' + name + ', set()/get() return proper value?' );
+							fireunit.compare( $.cookies.get( name ), testcookielist[name], 'Did running set() and get() methods on cookie, ' + name + ', return proper value?' );
 						}
-						//Do cookies get deleted properly?
+					//Do cookies get deleted properly?
 						for( name in testcookielist )
 						{
 							$.cookies.del( name );
-							fireunit.compare( $.cookies.get( name ), null, 'Did cookie, ' + name + ', del() remove the value?' );
+							fireunit.compare( null, $.cookies.get( name ), 'Did running del() method on cookie, ' + name + ', remove the value?' );
 						}
 						
+					//Test cookify
+						$( '#testCookify' ).attr( 'value', 'Value for cookify' ).cookify();
+						fireunit.compare( 'Value for cookify', $.cookies.get( 'testCookify' ), 'Does cookify() method set correct value?' );
+						$.cookies.del( 'testCookify' );
+
+					//Test cookieFill
+						$.cookies.set( 'testCookieFill', 'Value for cookie fill' );
+						$( '#testCookieFill' ).cookieFill();
+						fireunit.compare( 'Value for cookie fill', $( '#testCookieFill' ).attr( 'value' ), 'Does cookieFill() method fill correct field with correct value?' );
+						$.cookies.del( 'testCookieFill' );
+
+					//Testing complete
 						fireunit.testDone();
 
 					} )( window.fireunit );
