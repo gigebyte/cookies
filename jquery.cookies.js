@@ -57,7 +57,7 @@ jaaulde.utils.cookies = ( function()
 	var expiresGMTString = function( hoursToLive )
 	{
 		var dateObject = new Date();
-		dateObject.setTime( dateObject.getTime() + ( hoursToLive * 60 * 60 * 1000 ) ) ;
+		dateObject.setTime( dateObject.getTime() + ( hoursToLive * 60 * 60 * 1000 ) );
 
 		return dateObject.toGMTString();
 	};
@@ -74,7 +74,7 @@ jaaulde.utils.cookies = ( function()
 		options = resolveOptions( options );
 
 		return (
-			( typeof options.hoursToLive == 'number' ? '; expires=' + expiresGMTString( options.hoursToLive ) : '' ) +
+			( typeof options.hoursToLive === 'number' ? '; expires=' + expiresGMTString( options.hoursToLive ) : '' ) +
 			'; path=' + options.path +
 			( typeof options.domain === 'string' ? '; domain=' + options.domain : '' ) +
 			( options.secure === true ? '; secure' : '' )
@@ -91,7 +91,7 @@ jaaulde.utils.cookies = ( function()
 	{
 		cookies = {};
 		var pair, name, value, separated = document.cookie.split( ';' );
-		for( var i = 0; i < separated.length; i++ )
+		for( var i = 0; i < separated.length; i = i + 1 )
 		{
 			pair = separated[i].split( '=' );
 			name = pair[0].replace( /^\s*/, '' ).replace( /\s*$/, '' );
@@ -221,9 +221,12 @@ jaaulde.utils.cookies = ( function()
 			allCookies[cookieName] = true;
 		}
 
-		for( cookieName in allCookies )
+		for( var name in allCookies )
 		{
-			this.set( cookieName, null, options );
+			if( typeof name === 'string' && name !== '' )
+			{
+				this.set( name, null, options );
+			}
 		}
 	};
 	/**
@@ -238,7 +241,7 @@ jaaulde.utils.cookies = ( function()
 
 		this.set( testName, testValue );
 
-		if( this.get( testName ) == testValue )
+		if( this.get( testName ) === testValue )
 		{
 			this.del( testName );
 			returnValue = true;
@@ -291,7 +294,7 @@ jaaulde.utils.cookies = ( function()
 						while( iteration < nameAttrs.length && ( typeof name !== 'string' || name === '' ) )
 						{
 							name = $( this ).attr( nameAttrs[iteration] );
-							iteration++;
+							iteration = iteration + 1;
 						}
 
 						if( typeof name === 'string' || name !== '' )
@@ -326,7 +329,7 @@ jaaulde.utils.cookies = ( function()
 						while( iteration < nameAttrs.length && ( typeof name !== 'string' || name === '' ) )
 						{
 							name = $( this ).attr( nameAttrs[iteration] );
-							iteration++;
+							iteration = iteration + 1;
 						}
 
 						if( typeof name === 'string' && name !== '' )
