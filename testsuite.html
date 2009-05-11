@@ -79,6 +79,13 @@
 							$.cookies.del( name );
 							fireunit.compare( null, $.cookies.get( name ), 'Did running del() method on cookie, ' + name + ', remove the value?' );
 						}
+					//Does del() remove all cookies when passed true as first param?
+						for( name in testcookielist )
+						{
+							$.cookies.set( name, testcookielist[name] );
+						}
+						$.cookies.del( true );
+						fireunit.compare( 0, document.cookie.length, 'Did running del() method for all cookies empty the cookie string?' );
 
 					//Test filter
 						var testcookielist = {

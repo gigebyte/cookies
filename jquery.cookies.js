@@ -89,7 +89,7 @@ jaaulde.utils.cookies = ( function()
 	 */
 	var splitCookies = function()
 	{
-		cookies = [];
+		cookies = {};
 		var pair, name, value, separated = document.cookie.split( ';' );
 		for( var i = 0; i < separated.length; i++ )
 		{
@@ -115,14 +115,14 @@ jaaulde.utils.cookies = ( function()
 		var returnValue;
 		
 		splitCookies();
-		
+
 		if( typeof cookieName === 'string' )
 		{
 			returnValue = ( typeof cookies[cookieName] !== 'undefined' ) ? cookies[cookieName] : null;
 		}
 		else if( typeof cookieName === 'object' && cookieName !== null )
 		{
-			returnValue = [];
+			returnValue = {};
 			for( var item in cookieName )
 			{
 				if( typeof cookies[cookieName[item]] !== 'undefined' )
@@ -199,17 +199,32 @@ jaaulde.utils.cookies = ( function()
 	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
 	 *
 	 * @access public
-	 * @paramater String cookieName - name of cookie to delete
+	 * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
 	 * @paramater Object options - optional list of cookie options to specify ( path, domain )
 	 * @return void
 	 */
 	constructor.prototype.del = function( cookieName, options )
 	{
+		var allCookies = {};
+
 		if( typeof options !== 'object' || options === null )
 		{
 			options = {};
 		}
-		this.set( cookieName, null, options );
+
+		if( typeof cookieName === 'boolean' && cookieName === true )
+		{
+			allCookies = this.get();
+		}
+		else if( typeof cookieName === 'string' )
+		{
+			allCookies[cookieName] = true;
+		}
+
+		for( cookieName in allCookies )
+		{
+			this.set( cookieName, null, options );
+		}
 	};
 	/**
 	 * test - test whether the browser is accepting cookies
