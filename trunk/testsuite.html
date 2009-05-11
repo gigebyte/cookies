@@ -12,11 +12,35 @@
 
 		<div>
 			<form id="testform" action="" method="post">
-					<p><input type="text" name="testCookify" id="testCookify" value="" /></p>
+					<p><input type="text" name="testCookifyInput" id="testCookifyInput" value="" /></p>
+					<p><textarea name="testCookifyTextarea" id="testCookifyTextarea"></textarea></p>
+					<p>
+						<select name="testCookifySelect" id="testCookifySelect">
+							<option value="0">zero</option>
+							<option value="1">one</option>
+							<option value="2">two</option>
+						</select>
+					</p>
 					
-					<p><input type="text" name="testCookieFill" id="testCookieFill" value="" /></p>
+					<p><input type="text" name="testCookieFillInput" id="testCookieFillInput" value="" /></p>
+					<p><textarea name="testCookieFillTextarea" id="testCookieFillTextarea"></textarea></p>
+					<p>
+						<select name="testCookieFillSelect" id="testCookieFillSelect">
+							<option value="0">zero</option>
+							<option value="1">one</option>
+							<option value="2">two</option>
+						</select>
+					</p>
 					
-					<p><input type="text" name="testCookieBind" id="testCookieBind" value="" /></p>
+					<p><input type="text" name="testCookieBindInput" id="testCookieBindInput" value="" /></p>
+					<p><textarea name="testCookieBindTextarea" id="testCookieBindTextarea"></textarea></p>
+					<p>
+						<select name="testCookieBindSelect" id="testCookieBindSelect">
+							<option value="0">zero</option>
+							<option value="1">one</option>
+							<option value="2">two</option>
+						</select>
+					</p>
 			</form>
 		</div>
 
@@ -119,23 +143,55 @@
 						}
 
 					//Test cookify
-						$( '#testCookify' ).attr( 'value', 'Value for cookify' ).cookify();
-						fireunit.compare( 'Value for cookify', $.cookies.get( 'testCookify' ), 'Does cookify() method set correct value?' );
-						$.cookies.del( 'testCookify' );
+						$( '#testCookifyInput' ).val( 'Value for cookify input' ).cookify();
+						fireunit.compare( 'Value for cookify input', $.cookies.get( 'testCookifyInput' ), 'Does cookify() method set correct value on an input?' );
+						$.cookies.del( 'testCookifyInput' );
+
+						$( '#testCookifyTextarea' ).val( 'Value for cookify textarea' ).cookify();
+						fireunit.compare( 'Value for cookify textarea', $.cookies.get( 'testCookifyTextarea' ), 'Does cookify() method set correct value on a textarea?' );
+						$.cookies.del( 'testCookifyTextarea' );
+
+						$( '#testCookifySelect' ).val( '1' ).cookify();
+						fireunit.compare( '1', $.cookies.get( 'testCookifySelect' ), 'Does cookify() method set correct value on a select?' );
+						$.cookies.del( 'testCookifySelect' );
 
 					//Test cookieFill
-						$.cookies.set( 'testCookieFill', 'Value for cookie fill' );
-						$( '#testCookieFill' ).cookieFill();
-						fireunit.compare( 'Value for cookie fill', $( '#testCookieFill' ).attr( 'value' ), 'Does cookieFill() method fill correct field with correct value?' );
-						$.cookies.del( 'testCookieFill' );
+						$.cookies.set( 'testCookieFillInput', 'Value for cookie fill input' );
+						$( '#testCookieFillInput' ).cookieFill();
+						fireunit.compare( 'Value for cookie fill input', $( '#testCookieFillInput' ).val(), 'Does cookieFill() method fill correct field with correct value for input?' );
+						$.cookies.del( 'testCookieFillInput' );
+
+						$.cookies.set( 'testCookieFillTextarea', 'Value for cookie fill textarea' );
+						$( '#testCookieFillTextarea' ).cookieFill();
+						fireunit.compare( 'Value for cookie fill textarea', $( '#testCookieFillTextarea' ).val(), 'Does cookieFill() method fill correct field with correct value for textarea?' );
+						$.cookies.del( 'testCookieFillTextarea' );
+
+						$.cookies.set( 'testCookieFillSelect', '2' );
+						$( '#testCookieFillSelect' ).cookieFill();
+						fireunit.compare( '2', $( '#testCookieFillSelect' ).val(), 'Does cookieFill() method fill correct field with correct value for select?' );
+						$.cookies.del( 'testCookieFillSelect' );
 
 					//Test cookie bind
-						$.cookies.set( 'testCookieBind', 'First value for cookie bind' );
-						$( '#testCookieBind' ).cookieBind();
-						fireunit.compare( 'First value for cookie bind', $( '#testCookieBind' ).attr( 'value' ), 'Does cookieBind() method fill correct field with correct value?' );
-						$( '#testCookieBind' ).attr( 'value', 'Second value for cookie bind' ).change();
-						fireunit.compare( 'Second value for cookie bind', $.cookies.get( 'testCookieBind' ), 'Does cookieBind() method set correct cookie when field changes?' );
-						$.cookies.del( 'testCookieBind' );
+						$.cookies.set( 'testCookieBindInput', 'First value for cookie bind input' );
+						$( '#testCookieBindInput' ).cookieBind();
+						fireunit.compare( 'First value for cookie bind input', $( '#testCookieBindInput' ).val(), 'Does cookieBind() method fill correct field with correct value for input?' );
+						$( '#testCookieBindInput' ).val( 'Second value for cookie bind input' ).change();
+						fireunit.compare( 'Second value for cookie bind input', $.cookies.get( 'testCookieBindInput' ), 'Does cookieBind() method set correct cookie when field changes for input?' );
+						$.cookies.del( 'testCookieBindInput' );
+
+						$.cookies.set( 'testCookieBindTextarea', 'First value for cookie bind textarea' );
+						$( '#testCookieBindTextarea' ).cookieBind();
+						fireunit.compare( 'First value for cookie bind textarea', $( '#testCookieBindTextarea' ).val(), 'Does cookieBind() method fill correct field with correct value for textarea?' );
+						$( '#testCookieBindTextarea' ).val( 'Second value for cookie bind textarea' ).change();
+						fireunit.compare( 'Second value for cookie bind textarea', $.cookies.get( 'testCookieBindTextarea' ), 'Does cookieBind() method set correct cookie when field changes for textarea?' );
+						$.cookies.del( 'testCookieBindTextarea' );
+
+						$.cookies.set( 'testCookieBindSelect', '2' );
+						$( '#testCookieBindSelect' ).cookieBind();
+						fireunit.compare( '2', $( '#testCookieBindSelect' ).val(), 'Does cookieBind() method fill correct field with correct value for select?' );
+						$( '#testCookieBindSelect' ).val( '0' ).change();
+						fireunit.compare( '0', $.cookies.get( 'testCookieBindSelect' ), 'Does cookieBind() method set correct cookie when field changes for select?' );
+						$.cookies.del( 'testCookieBindSelect' );
 
 					//Testing complete
 						fireunit.testDone();

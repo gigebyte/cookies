@@ -299,7 +299,7 @@ jaaulde.utils.cookies = ( function()
 							inputType = $( this ).attr( 'type' ).toLowerCase();
 							if( inputType !== 'radio' && inputType !== 'checkbox' )
 							{
-								value = $( this ).attr( 'value' );
+								value = $( this ).val();
 								if( typeof value !== 'string' || value === '' )
 								{
 									value = null;
@@ -335,9 +335,9 @@ jaaulde.utils.cookies = ( function()
 							if( value !== null )
 							{
 								nodeType = this.nodeName.toLowerCase();
-								if( nodeType === 'input' || nodeType === 'textarea' )
+								if( nodeType === 'input' || nodeType === 'textarea' || nodeType === 'select' )
 								{
-										$( this ).attr( 'value', value );
+								    $( this ).val( value );
 								}
 								else
 								{
