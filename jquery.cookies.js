@@ -279,7 +279,9 @@ jaaulde.utils.cookies = ( function()
 
 			var extensions = {
 				/**
-				 * $( 'selector' ).cookify - set the value of an input field to a cookie by the name or id of the field (radio and checkbox not supported)
+				 * $( 'selector' ).cookify - set the value of an input field or the innerHTML of an element to a cookie by the name or id of the field or element
+				 *                           (radio and checkbox not yet supported)
+				 *                           (field or element MUST have name or id attribute)
 				 *
 				 * @access public
 				 * @param Object options - list of cookie options to specify
@@ -289,20 +291,45 @@ jaaulde.utils.cookies = ( function()
 				{
 					return this.each( function()
 					{
-						var name = '', value = '', nameAttrs = ['name', 'id'], iteration = 0, inputType;
+						var i, resolvedName = false, resolvedValue = false, name = '', value = '', nameAttrs = ['name', 'id'], nodeName, inputType;
 
-						while( iteration < nameAttrs.length && ( typeof name !== 'string' || name === '' ) )
+						for( i in nameAttrs )
 						{
-							name = $( this ).attr( nameAttrs[iteration] );
-							iteration = iteration + 1;
+							if( ! isNaN( i ) )
+							{
+								name = $( this ).attr( nameAttrs[ i ] );
+								if( typeof name === 'string' && name !== '' )
+								{
+									resolvedName = true;
+									break;
+								}
+							}
 						}
 
-						if( typeof name === 'string' || name !== '' )
+						if( resolvedName )
 						{
-							inputType = $( this ).attr( 'type' ).toLowerCase();
-							if( inputType !== 'radio' && inputType !== 'checkbox' )
+							nodeName = this.nodeName.toLowerCase();
+							if( nodeName !== 'input' && nodeName !== 'textarea' && nodeName !== 'select' && nodeName !== 'img' )
 							{
-								value = $( this ).val();
+								value = $( this ).html();
+								resolvedValue = true;
+							}
+							else
+							{
+								inputType = $( this ).attr( 'type' );
+								if( typeof inputType === 'string' && inputType !== '' )
+								{
+									inputType = inputType.toLowerCase();
+								}
+								if( inputType !== 'radio' && inputType !== 'checkbox' )
+								{
+									value = $( this ).val();
+									resolvedValue = true;
+								}
+							}
+							
+							if( resolvedValue )
+							{
 								if( typeof value !== 'string' || value === '' )
 								{
 									value = null;
@@ -310,8 +337,6 @@ jaaulde.utils.cookies = ( function()
 								$.cookies.set( name, value, options );
 							}
 						}
-
-						iteration = 0;
 					} );
 				},
 				/**
@@ -324,21 +349,28 @@ jaaulde.utils.cookies = ( function()
 				{
 					return this.each( function()
 					{
-						var name = '', value, nameAttrs = ['name', 'id'], iteration = 0, nodeType;
+						var i, resolvedName = false, name = '', value, nameAttrs = ['name', 'id'], iteration = 0, nodeName;
 
-						while( iteration < nameAttrs.length && ( typeof name !== 'string' || name === '' ) )
+						for( i in nameAttrs )
 						{
-							name = $( this ).attr( nameAttrs[iteration] );
-							iteration = iteration + 1;
+							if( ! isNaN( i ) )
+							{
+								name = $( this ).attr( nameAttrs[ i ] );
+								if( typeof name === 'string' && name !== '' )
+								{
+									resolvedName = true;
+									break;
+								}
+							}
 						}
 
-						if( typeof name === 'string' && name !== '' )
+						if( resolvedName )
 						{
 							value = $.cookies.get( name );
 							if( value !== null )
 							{
-								nodeType = this.nodeName.toLowerCase();
-								if( nodeType === 'input' || nodeType === 'textarea' || nodeType === 'select' )
+								nodeName = this.nodeName.toLowerCase();
+								if( nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select' )
 								{
 								    $( this ).val( value );
 								}
