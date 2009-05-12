@@ -25,6 +25,20 @@ get = function(cookieName)
  * `jaaulde.utils.cookies.get();`
   * returns array of all cookies from your site
 
+=== Get Filtered list of cookies ===
+{{{
+/**
+ * filter - get array of cookies whose names match the provided RegExp
+ *
+ * @access public
+ * @paramater Object RegExp - The regular expression to match against cookie names
+ * @return Mixed - Object:hash of cookies whose names match the RegExp
+ */
+filter = function( cookieNameRegExp )
+}}}
+ * `jaaulde.utils.cookies.filter( /^site/ );`
+  * returns list of cookies whose names start with "site"
+
 === Set a cookie ===
 {{{
 /**
