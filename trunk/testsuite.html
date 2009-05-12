@@ -21,6 +21,7 @@
 							<option value="2">two</option>
 						</select>
 					</p>
+					<p id="testCookifyParagraph"></p>
 					
 					<p><input type="text" name="testCookieFillInput" id="testCookieFillInput" value="" /></p>
 					<p><textarea name="testCookieFillTextarea" id="testCookieFillTextarea"></textarea></p>
@@ -31,7 +32,8 @@
 							<option value="2">two</option>
 						</select>
 					</p>
-					
+					<p id="testCookieFillParagraph"></p>
+
 					<p><input type="text" name="testCookieBindInput" id="testCookieBindInput" value="" /></p>
 					<p><textarea name="testCookieBindTextarea" id="testCookieBindTextarea"></textarea></p>
 					<p>
@@ -41,6 +43,7 @@
 							<option value="2">two</option>
 						</select>
 					</p>
+					<p id="testCookieBindParagraph"></p>
 			</form>
 		</div>
 
@@ -154,6 +157,10 @@
 						$( '#testCookifySelect' ).val( '1' ).cookify();
 						fireunit.compare( '1', $.cookies.get( 'testCookifySelect' ), 'Does cookify() method set correct value on a select?' );
 						$.cookies.del( 'testCookifySelect' );
+						
+						$( '#testCookifyParagraph' ).html( 'Value for cookify paragraph' ).cookify();
+						fireunit.compare( 'Value for cookify paragraph', $.cookies.get( 'testCookifyParagraph' ), 'Does cookify() method set correct value on a paragraph?' );
+						$.cookies.del( 'testCookifyParagraph' );
 
 					//Test cookieFill
 						$.cookies.set( 'testCookieFillInput', 'Value for cookie fill input' );
@@ -170,6 +177,11 @@
 						$( '#testCookieFillSelect' ).cookieFill();
 						fireunit.compare( '2', $( '#testCookieFillSelect' ).val(), 'Does cookieFill() method fill correct field with correct value for select?' );
 						$.cookies.del( 'testCookieFillSelect' );
+
+						$.cookies.set( 'testCookieFillParagraph', 'Value for cookie fill paragraph' );
+						$( '#testCookieFillParagraph' ).cookieFill();
+						fireunit.compare( 'Value for cookie fill paragraph', $( '#testCookieFillParagraph' ).html(), 'Does cookieFill() method fill correct field with correct value for paragraph?' );
+						$.cookies.del( 'testCookieFillParagraph' );
 
 					//Test cookie bind
 						$.cookies.set( 'testCookieBindInput', 'First value for cookie bind input' );
@@ -192,6 +204,13 @@
 						$( '#testCookieBindSelect' ).val( '0' ).change();
 						fireunit.compare( '0', $.cookies.get( 'testCookieBindSelect' ), 'Does cookieBind() method set correct cookie when field changes for select?' );
 						$.cookies.del( 'testCookieBindSelect' );
+
+						$.cookies.set( 'testCookieBindParagraph', 'First value for cookie bind paragraph' );
+						$( '#testCookieBindParagraph' ).cookieBind();
+						fireunit.compare( 'First value for cookie bind paragraph', $( '#testCookieBindParagraph' ).html(), 'Does cookieBind() method fill correct field with correct value for paragraph?' );
+						$( '#testCookieBindParagraph' ).html( 'Second value for cookie bind paragraph' ).change();
+						fireunit.compare( 'Second value for cookie bind paragraph', $.cookies.get( 'testCookieBindParagraph' ), 'Does cookieBind() method set correct cookie when field changes for paragraph?' );
+						$.cookies.del( 'testCookieBindParagraph' );
 
 					//Testing complete
 						fireunit.testDone();
