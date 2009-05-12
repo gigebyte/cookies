@@ -119,17 +119,17 @@ If jQuery is available, then all of the above methods are available to you under
 
 In addition, there are some jQuery function additions for helping automate some cookie tasks:
 
- * *Set the value of an input to a cookie named after the input's name or id attribute*
+ * *Set the value of a form field or the HTML of an element to a cookie named after the field's/element's name or id attribute*
   * `$('#username').cookify();`
-   * The value of the input with id "username" is set to a cookie named after the name or id attribute of that input element
+   * The value of the field, or HTML of the element, with id "username" is set to a cookie named after the name or id attribute of that field/element
 
- * *Fill an input or textarea's value, or an element's innerHTML with the value of a cookie*
+ * *Fill a field's value, or an element's innerHTML with the value of a cookie*
   * `$('#username').cookieFill();`
-   * Set the value of the input with id, 'username', to the value of a cookie by the same name
+   * Set the value of the input, or HTML of the element, with id, 'username', to the value of a cookie by the same name
 
  * *Bind an input to the cookies library*
   * `$('#username').cookieBind();`
-   * Fills the input with id, 'username' with the cookie named the same, and sets the input's change event to fire cookify() to update the cookie when the input value changes
+   * Fills the field or element with id, 'username', with the cookie named the same and sets the field's/element's change event to fire cookify() to update the cookie when the input value changes
 
 == Options object ==
 
