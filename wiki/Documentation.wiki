@@ -64,8 +64,8 @@ set = function(cookieName, value, options)
  * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
  *
  * @access public
- * @paramater String cookieName - name of cookie to delete
- * @paramater Object options - optional list of cookie options to specify
+ * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
+ * @paramater Object options - optional list of cookie options to specify ( path, domain )
  * @return void
  */
 del = function(cookieName, options)
@@ -74,6 +74,8 @@ del = function(cookieName, options)
   * deletes a cookie, 'myCookie', with default options
  * `jaaulde.utils.cookies.del('myCookie', {path: '/somedir'});`
   * deletes a cookie by the name of 'myCookie' which had been set with a path of '/somedir'
+ * `jaaulde.utils.cookies.del(true);`
+  * deletes all cookies
  * A cookie can only be deleted using the same options with which it was set
  * *See information on options object below*
 
