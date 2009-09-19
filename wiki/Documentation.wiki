@@ -112,6 +112,7 @@ setOptions = function(options)
 
 If jQuery is available, then all of the above methods are available to you under the _jQuery.cookies_ (or _$.cookies_ ) namespace:
  * `$.cookies.get()`
+ * `$.cookies.filter()`
  * `$.cookies.set()`
  * `$.cookies.del()`
  * `$.cookies.test()`
