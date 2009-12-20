@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
 		<title>Testing Cookies</title>
-		<script type="text/javascript" src="../externals/jquery-1.3.1.min.js"></script>
+		<script type="text/javascript" src="../externals/jquery/core/1.3.2/jquery.js"></script>
 		<script type="text/javascript" src="jquery.cookies.js"></script>
 	</head>
 	<body>
@@ -100,6 +100,10 @@
 							$.cookies.set( name, testcookielist[name] );
 							fireunit.compare( $.cookies.get( name ), testcookielist[name], 'Did running set() and get() methods on cookie, ' + name + ', return proper value?' );
 						}
+          //Does a cookie with apparently malformed encoding read back without error?
+            document.cookie = 'testMalformedEncoding=%8072%8074%8073%8050; path=/';
+            fireunit.compare( $.cookies.get( 'testMalformedEncoding' ), '%8072%8074%8073%8050', 'Did malformed encoding avoid error and return the unencoded string?' );
+
 					//Do cookies get deleted properly?
 						for( name in testcookielist )
 						{
@@ -212,8 +216,22 @@
 						fireunit.compare( 'Second value for cookie bind paragraph', $.cookies.get( 'testCookieBindParagraph' ), 'Does cookieBind() method set correct cookie when field changes for paragraph?' );
 						$.cookies.del( 'testCookieBindParagraph' );
 
-					//Testing complete
-						fireunit.testDone();
+          //Test if date object works for expiration
+            var exp = new Date();
+            exp.setTime( exp.getTime() + 1000 );
+            $.cookies.set( 'testExpWithDate', 'EXP DATE', { expiresAt: exp } );
+            var notExp = new Date();
+            notExp.setTime( notExp.getTime() + 5000 );
+            $.cookies.set( 'testNotExpWithDate', 'NO EXP DATE', { expiresAt: notExp } );
+            window.setTimeout( function()
+            {
+              fireunit.compare( $.cookies.get( 'testExpWithDate' ), null, 'Does expiresAt option work to expire?' );
+              fireunit.compare( $.cookies.get( 'testNotExpWithDate' ), 'NO EXP DATE', 'Does expiresAt option work to not expire?' );
+
+          //Testing complete
+						  fireunit.testDone();
+            }, 2000 );
+					
 
 					} )( window.fireunit );
 				}
