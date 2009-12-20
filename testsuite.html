@@ -100,9 +100,9 @@
 							$.cookies.set( name, testcookielist[name] );
 							fireunit.compare( $.cookies.get( name ), testcookielist[name], 'Did running set() and get() methods on cookie, ' + name + ', return proper value?' );
 						}
-          //Does a cookie with apparently malformed encoding read back without error?
-            document.cookie = 'testMalformedEncoding=%8072%8074%8073%8050; path=/';
-            fireunit.compare( $.cookies.get( 'testMalformedEncoding' ), '%8072%8074%8073%8050', 'Did malformed encoding avoid error and return the unencoded string?' );
+					//Does a cookie with apparently malformed encoding read back without error?
+						document.cookie = 'testMalformedEncoding=%8072%8074%8073%8050; path=/';
+						fireunit.compare( $.cookies.get( 'testMalformedEncoding' ), '%8072%8074%8073%8050', 'Did malformed encoding avoid error and return the unencoded string?' );
 
 					//Do cookies get deleted properly?
 						for( name in testcookielist )
@@ -216,22 +216,21 @@
 						fireunit.compare( 'Second value for cookie bind paragraph', $.cookies.get( 'testCookieBindParagraph' ), 'Does cookieBind() method set correct cookie when field changes for paragraph?' );
 						$.cookies.del( 'testCookieBindParagraph' );
 
-          //Test if date object works for expiration
-            var exp = new Date();
-            exp.setTime( exp.getTime() + 1000 );
-            $.cookies.set( 'testExpWithDate', 'EXP DATE', { expiresAt: exp } );
-            var notExp = new Date();
-            notExp.setTime( notExp.getTime() + 5000 );
-            $.cookies.set( 'testNotExpWithDate', 'NO EXP DATE', { expiresAt: notExp } );
-            window.setTimeout( function()
-            {
-              fireunit.compare( $.cookies.get( 'testExpWithDate' ), null, 'Does expiresAt option work to expire?' );
-              fireunit.compare( $.cookies.get( 'testNotExpWithDate' ), 'NO EXP DATE', 'Does expiresAt option work to not expire?' );
+					//Test if date object works for expiration
+						var exp = new Date();
+						exp.setTime( exp.getTime() + 1000 );
+						$.cookies.set( 'testExpWithDate', 'EXP DATE', { expiresAt: exp } );
+						var notExp = new Date();
+						notExp.setTime( notExp.getTime() + 5000 );
+						$.cookies.set( 'testNotExpWithDate', 'NO EXP DATE', { expiresAt: notExp } );
+						window.setTimeout( function()
+						{
+							fireunit.compare( $.cookies.get( 'testExpWithDate' ), null, 'Does expiresAt option work to expire?' );
+							fireunit.compare( $.cookies.get( 'testNotExpWithDate' ), 'NO EXP DATE', 'Does expiresAt option work to not expire?' );
 
-          //Testing complete
-						  fireunit.testDone();
-            }, 2000 );
-					
+					//Testing complete
+							fireunit.testDone();
+						}, 2000 );
 
 					} )( window.fireunit );
 				}
