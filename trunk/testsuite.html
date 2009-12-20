@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
 		<title>Testing Cookies</title>
+		<script type="text/javascript" src="../externals/json/json2.js"></script>
 		<script type="text/javascript" src="../externals/jquery/core/1.3.2/jquery.js"></script>
 		<script type="text/javascript" src="jquery.cookies.js"></script>
 	</head>
@@ -100,6 +101,46 @@
 							$.cookies.set( name, testcookielist[name] );
 							fireunit.compare( $.cookies.get( name ), testcookielist[name], 'Did running set() and get() methods on cookie, ' + name + ', return proper value?' );
 						}
+
+					//Does an object set to cookies return properly unserilaized?
+						var testObject = {
+							one: 'one',
+							two: true,
+							three: [
+								'one',
+								'two',
+								'three'
+							],
+							four: {
+								one: 'one',
+								two: false
+							}
+						};
+						$.cookies.set( 'testingJSON', testObject );
+						var retrievedObject = $.cookies.get( 'testingJSON' );
+						fireunit.compare( typeof retrievedObject, 'object', 'Does JSON serialization and un-serialization work 1?' );
+						fireunit.compare( typeof testObject['one'], 'string', 'Does JSON serialization and un-serialization work 2?' );
+						fireunit.compare( testObject['one'], retrievedObject['one'], 'Does JSON serialization and un-serialization work 3?' );
+						fireunit.compare( typeof testObject['two'], 'boolean', 'Does JSON serialization and un-serialization work 4?' );
+						fireunit.compare( testObject['two'], retrievedObject['two'], 'Does JSON serialization and un-serialization work 5?' );
+						fireunit.compare( testObject['three'] instanceof Array, true, 'Does JSON serialization and un-serialization work 6?' );
+						fireunit.compare( testObject['three'][0], retrievedObject['three'][0], 'Does JSON serialization and un-serialization work 7?' );
+						fireunit.compare( testObject['three'][1], retrievedObject['three'][1], 'Does JSON serialization and un-serialization work 8?' );
+						fireunit.compare( testObject['three'][2], retrievedObject['three'][2], 'Does JSON serialization and un-serialization work 9?' );
+						fireunit.compare( typeof testObject['four'], 'object', 'Does JSON serialization and un-serialization work 10?' );
+						fireunit.compare( testObject['four']['one'], retrievedObject['four']['one'], 'Does JSON serialization and un-serialization work 11?' );
+						fireunit.compare( testObject['four']['two'], retrievedObject['four']['two'], 'Does JSON serialization and un-serialization work 12?' );
+
+						$.cookies.set( 'testingJSON', true );
+						fireunit.compare( typeof $.cookies.get( 'testingJSON' ), 'boolean', 'Does JSON serialization and un-serialization work 13?' );
+						fireunit.compare( $.cookies.get( 'testingJSON' ), true, 'Does JSON serialization and un-serialization work 14?' );
+						$.cookies.set( 'testingJSON', false );
+						fireunit.compare( typeof $.cookies.get( 'testingJSON' ), 'boolean', 'Does JSON serialization and un-serialization work 15?' );
+						fireunit.compare( $.cookies.get( 'testingJSON' ), false, 'Does JSON serialization and un-serialization work? 16' );
+						$.cookies.set( 'testingJSON', 100 );
+						fireunit.compare( typeof $.cookies.get( 'testingJSON' ), 'number', 'Does JSON serialization and un-serialization work 17?' );
+						fireunit.compare( $.cookies.get( 'testingJSON' ), 100, 'Does JSON serialization and un-serialization work 18?' );
+
 					//Does a cookie with apparently malformed encoding read back without error?
 						document.cookie = 'testMalformedEncoding=%8072%8074%8073%8050; path=/';
 						fireunit.compare( $.cookies.get( 'testMalformedEncoding' ), '%8072%8074%8073%8050', 'Did malformed encoding avoid error and return the unencoded string?' );

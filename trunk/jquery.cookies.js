@@ -99,11 +99,12 @@ jaaulde.utils.cookies = ( function()
 	*/
 	parseCookies = function()
 	{
-		var cookies = {}, i, pair, name, value, separated = document.cookie.split( ';' );
+		var cookies = {}, i, pair, name, value, separated = document.cookie.split( ';' ), unparsedValue;
 		for( i = 0; i < separated.length; i = i + 1 )
 		{
 			pair = separated[i].split( '=' );
 			name = pair[0].replace( /^\s*/, '' ).replace( /\s*$/, '' );
+
 			try
 			{
 				value = decodeURIComponent( pair[1] );
@@ -112,6 +113,20 @@ jaaulde.utils.cookies = ( function()
 			{
 				value = pair[1];
 			}
+
+			if( typeof JSON === 'object' && JSON !== null && typeof JSON.parse === 'function' )
+			{
+				try
+				{
+					unparsedValue = value;
+					value = JSON.parse( value );
+				}
+				catch( e )
+				{
+					value = unparsedValue;
+				}
+			}
+
 			cookies[name] = value;
 		}
 		return cookies;
@@ -193,15 +208,29 @@ jaaulde.utils.cookies = ( function()
 	*/
 	constructor.prototype.set = function( cookieName, value, options )
 	{
+		if( typeof options !== 'object' || options === null )
+		{
+			options = {};
+		}
+
 		if( typeof value === 'undefined' || value === null )
 		{
-			if( typeof options !== 'object' || options === null )
-			{
-				options = {};
-			}
 			value = '';
 			options.hoursToLive = -8760;
 		}
+
+		else if( typeof value !== 'string' )
+		{
+			if( typeof JSON === 'object' && JSON !== null && typeof JSON.stringify === 'function' )
+			{
+				value = JSON.stringify( value );
+			}
+			else
+			{
+				throw new Error( 'cookies.set() received non-string value and could not serialize.' );
+			}
+		}
+
 
 		var optionsString = assembleOptionsString( options );
 
