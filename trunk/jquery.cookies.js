@@ -1,30 +1,30 @@
 /**
- * Copyright (c) 2005 - 2009, James Auldridge
- * All rights reserved.
- *
- * Licensed under the BSD, MIT, and GPL (your choice!) Licenses:
- *  http://code.google.com/p/cookies/wiki/License
- *
- */
+* Copyright (c) 2005 - 2009, James Auldridge
+* All rights reserved.
+*
+* Licensed under the BSD, MIT, and GPL (your choice!) Licenses:
+*  http://code.google.com/p/cookies/wiki/License
+*
+*/
 var jaaulde = window.jaaulde || {};
 jaaulde.utils = jaaulde.utils || {};
 jaaulde.utils.cookies = ( function()
 {
 	var resolveOptions, assembleOptionsString, parseCookies, constructor, defaultOptions = {
 		hoursToLive: null,
-    expiresAt: null,
+		expiresAt: null,
 		path: '/',
 		domain:  null,
 		secure: false
 	};
 	/**
-	 * resolveOptions - receive an options object and ensure all options are present and valid, replacing with defaults where necessary
-	 *
-	 * @access private
-	 * @static
-	 * @parameter Object options - optional options to start with
-	 * @return Object complete and valid options object
-	 */
+	* resolveOptions - receive an options object and ensure all options are present and valid, replacing with defaults where necessary
+	*
+	* @access private
+	* @static
+	* @parameter Object options - optional options to start with
+	* @return Object complete and valid options object
+	*/
 	resolveOptions = function( options )
 	{
 		var returnValue, expireDate;
@@ -35,51 +35,50 @@ jaaulde.utils.cookies = ( function()
 		}
 		else
 		{
-      returnValue = {
-        expiresAt: defaultOptions.expiresAt,
-        path: defaultOptions.path,
-        domain: defaultOptions.domain,
-        secure: defaultOptions.secure
-      };
+			returnValue = {
+				expiresAt: defaultOptions.expiresAt,
+				path: defaultOptions.path,
+				domain: defaultOptions.domain,
+				secure: defaultOptions.secure
+			};
 
-      if( typeof options.expiresAt === 'object' && options.expiresAt instanceof Date )
-      {
-        returnValue.expiresAt = options.expiresAt;
-      }
-      else if( typeof options.hoursToLive === 'number' && options.hoursToLive !== 0 )
-      {
-        expireDate = new Date();
-        expireDate.setTime( expireDate.getTime() + ( options.hoursToLive * 60 * 60 * 1000 ) );
+			if( typeof options.expiresAt === 'object' && options.expiresAt instanceof Date )
+			{
+				returnValue.expiresAt = options.expiresAt;
+			}
+			else if( typeof options.hoursToLive === 'number' && options.hoursToLive !== 0 )
+			{
+				expireDate = new Date();
+				expireDate.setTime( expireDate.getTime() + ( options.hoursToLive * 60 * 60 * 1000 ) );
+				returnValue.expiresAt = expireDate;
+			}
 
-        returnValue.expiresAt = expireDate;
-      }
+			if( typeof options.path === 'string' && options.path !== '' )
+			{
+				returnValue.path = options.path;
+			}
 
-      if( typeof options.path === 'string' && options.path !== '' )
-      {
-        returnValue.path = options.path;
-      }
+			if( typeof options.domain === 'string' && options.domain !== '' )
+			{
+				returnValue = options.domain;
+			}
 
-      if( typeof options.domain === 'string' && options.domain !== '' )
-      {
-        returnValue = options.domain;
-      }
-
-      if( typeof options.secure === 'boolean' && options.secure )
-      {
-        returnValue = options.secure;
-      }
+			if( typeof options.secure === 'boolean' && options.secure )
+			{
+				returnValue = options.secure;
+			}
 		}
 
 		return returnValue;
-	};
+		};
 	/**
-	 * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
-	 *
-	 * @access private
-	 * @static
-	 * @parameter options OBJECT - optional options to start with
-	 * @return STRING - complete and valid cookie setting options
-	 */
+	* assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
+	*
+	* @access private
+	* @static
+	* @parameter options OBJECT - optional options to start with
+	* @return STRING - complete and valid cookie setting options
+	*/
 	assembleOptionsString = function( options )
 	{
 		options = resolveOptions( options );
@@ -92,12 +91,12 @@ jaaulde.utils.cookies = ( function()
 		);
 	};
 	/**
-	 * parseCookies - retrieve document.cookie string and break it into a hash
-	 *
-	 * @access private
-	 * @static
-	 * @return OBJECT - hash of cookies from document.cookie
-	 */
+	* parseCookies - retrieve document.cookie string and break it into a hash
+	*
+	* @access private
+	* @static
+	* @return OBJECT - hash of cookies from document.cookie
+	*/
 	parseCookies = function()
 	{
 		var cookies = {}, i, pair, name, value, separated = document.cookie.split( ';' );
@@ -105,28 +104,28 @@ jaaulde.utils.cookies = ( function()
 		{
 			pair = separated[i].split( '=' );
 			name = pair[0].replace( /^\s*/, '' ).replace( /\s*$/, '' );
-      try
-      {
-        value = decodeURIComponent( pair[1] );
-      }
-      catch( e )
-      {
-        value = pair[1];
-      }
+			try
+			{
+				value = decodeURIComponent( pair[1] );
+			}
+			catch( e )
+			{
+				value = pair[1];
+			}
 			cookies[name] = value;
 		}
 		return cookies;
 	};
 
 	constructor = function(){};
-	
+
 	/**
-	 * get - get one, several, or all cookies
-	 *
-	 * @access public
-	 * @paramater cookieName MIXED - STRING:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
-	 * @return MIXED - STRING:if single cookie requested and found; null:if single cookie requested and not found; OBJECT:hash of multiple or all cookies
-	 */
+	* get - get one, several, or all cookies
+	*
+	* @access public
+	* @paramater cookieName MIXED - STRING:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
+	* @return MIXED - STRING:if single cookie requested and found; null:if single cookie requested and not found; OBJECT:hash of multiple or all cookies
+	*/
 	constructor.prototype.get = function( cookieName )
 	{
 		var returnValue, item, cookies = parseCookies();
@@ -158,12 +157,12 @@ jaaulde.utils.cookies = ( function()
 		return returnValue;
 	};
 	/**
-	 * filter - get array of cookies whose names match the provided RegExp
-	 *
-	 * @access public
-	 * @paramater cookieNameRegExp RegExp - The regular expression to match against cookie names
-	 * @return MIXED - OBJECT:hash of cookies whose names match the RegExp
-	 */
+	* filter - get array of cookies whose names match the provided RegExp
+	*
+	* @access public
+	* @paramater cookieNameRegExp RegExp - The regular expression to match against cookie names
+	* @return MIXED - OBJECT:hash of cookies whose names match the RegExp
+	*/
 	constructor.prototype.filter = function( cookieNameRegExp )
 	{
 		var cookieName, returnValue = {}, cookies = parseCookies();
@@ -184,14 +183,14 @@ jaaulde.utils.cookies = ( function()
 		return returnValue;
 	};
 	/**
-	 * set - set or delete a cookie with desired options
-	 *
-	 * @access public
-	 * @paramater cookieName STRING - name of cookie to set
-	 * @paramater value MIXED - STRING:value to assign cookie if setting, null:if deleting
-	 * @paramater options OBJECT - optional list of cookie options to specify (hoursToLive, path, domain, secure)
-	 * @return void
-	 */
+	* set - set or delete a cookie with desired options
+	*
+	* @access public
+	* @paramater cookieName STRING - name of cookie to set
+	* @paramater value MIXED - STRING:value to assign cookie if setting, null:if deleting
+	* @paramater options OBJECT - optional list of cookie options to specify (hoursToLive, path, domain, secure)
+	* @return void
+	*/
 	constructor.prototype.set = function( cookieName, value, options )
 	{
 		if( typeof value === 'undefined' || value === null )
@@ -203,19 +202,19 @@ jaaulde.utils.cookies = ( function()
 			value = '';
 			options.hoursToLive = -8760;
 		}
-		
+
 		var optionsString = assembleOptionsString( options );
 
 		document.cookie = cookieName + '=' + encodeURIComponent( value ) + optionsString;
 	};
 	/**
-	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
-	 *
-	 * @access public
-	 * @paramater cookieName MIXED - String name of cookie to delete, or Bool true to delete all
-	 * @paramater options OBJECT - optional list of cookie options to specify ( path, domain )
-	 * @return void
-	 */
+	* del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
+	*
+	* @access public
+	* @paramater cookieName MIXED - String name of cookie to delete, or Bool true to delete all
+	* @paramater options OBJECT - optional list of cookie options to specify ( path, domain )
+	* @return void
+	*/
 	constructor.prototype.del = function( cookieName, options )
 	{
 		var allCookies = {}, name;
@@ -243,11 +242,11 @@ jaaulde.utils.cookies = ( function()
 		}
 	};
 	/**
-	 * test - test whether the browser is accepting cookies
-	 *
-	 * @access public
-	 * @return BOOL
-	 */
+	* test - test whether the browser is accepting cookies
+	*
+	* @access public
+	* @return BOOL
+	*/
 	constructor.prototype.test = function()
 	{
 		var returnValue = false, testName = 'cT', testValue = 'data';
@@ -263,12 +262,12 @@ jaaulde.utils.cookies = ( function()
 		return returnValue;
 	};
 	/**
-	 * setOptions - set default options for calls to cookie methods
-	 *
-	 * @access public
-	 * @param options OBJECT - list of cookie options to specify (hoursToLive, path, domain, secure)
-	 * @return void
-	 */
+	* setOptions - set default options for calls to cookie methods
+	*
+	* @access public
+	* @param options OBJECT - list of cookie options to specify (hoursToLive, path, domain, secure)
+	* @return void
+	*/
 	constructor.prototype.setOptions = function( options )
 	{
 		if( typeof options !== 'object' )
@@ -292,14 +291,14 @@ jaaulde.utils.cookies = ( function()
 
 			var extensions = {
 				/**
-				 * $( 'selector' ).cookify - set the value of an input field or the innerHTML of an element to a cookie by the name or id of the field or element
-				 *                           (radio and checkbox not yet supported)
-				 *                           (field or element MUST have name or id attribute)
-				 *
-				 * @access public
-				 * @param options OBJECT - list of cookie options to specify
-				 * @return jQuery
-				 */
+				* $( 'selector' ).cookify - set the value of an input field or the innerHTML of an element to a cookie by the name or id of the field or element
+				*                           (radio and checkbox not yet supported)
+				*                           (field or element MUST have name or id attribute)
+				*
+				* @access public
+				* @param options OBJECT - list of cookie options to specify
+				* @return jQuery
+				*/
 				cookify: function( options )
 				{
 					return this.each( function()
@@ -340,7 +339,7 @@ jaaulde.utils.cookies = ( function()
 									resolvedValue = true;
 								}
 							}
-							
+
 							if( resolvedValue )
 							{
 								if( typeof value !== 'string' || value === '' )
@@ -353,11 +352,11 @@ jaaulde.utils.cookies = ( function()
 					} );
 				},
 				/**
-				 * $( 'selector' ).cookieFill - set the value of an input field or the innerHTML of an element from a cookie by the name or id of the field or element
-				 *
-				 * @access public
-				 * @return jQuery
-				 */
+				* $( 'selector' ).cookieFill - set the value of an input field or the innerHTML of an element from a cookie by the name or id of the field or element
+				*
+				* @access public
+				* @return jQuery
+				*/
 				cookieFill: function()
 				{
 					return this.each( function()
@@ -385,7 +384,7 @@ jaaulde.utils.cookies = ( function()
 								nodeName = this.nodeName.toLowerCase();
 								if( nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select' )
 								{
-								    $( this ).val( value );
+									$( this ).val( value );
 								}
 								else
 								{
@@ -398,12 +397,12 @@ jaaulde.utils.cookies = ( function()
 					} );
 				},
 				/**
-				 * $( 'selector' ).cookieBind - call cookie fill on matching elements, and bind their change events to cookify()
-				 *
-				 * @access public
-				 * @param options OBJECT - list of cookie options to specify
-				 * @return jQuery
-				 */
+				* $( 'selector' ).cookieBind - call cookie fill on matching elements, and bind their change events to cookify()
+				*
+				* @access public
+				* @param options OBJECT - list of cookie options to specify
+				* @return jQuery
+				*/
 				cookieBind: function( options )
 				{
 					return this.each( function()
