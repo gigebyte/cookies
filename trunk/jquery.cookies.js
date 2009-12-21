@@ -11,7 +11,6 @@ jaaulde.utils = jaaulde.utils || {};
 jaaulde.utils.cookies = ( function()
 {
 	var resolveOptions, assembleOptionsString, parseCookies, constructor, defaultOptions = {
-		hoursToLive: null,
 		expiresAt: null,
 		path: '/',
 		domain:  null,
@@ -60,12 +59,12 @@ jaaulde.utils.cookies = ( function()
 
 			if( typeof options.domain === 'string' && options.domain !== '' )
 			{
-				returnValue = options.domain;
+				returnValue.domain = options.domain;
 			}
 
-			if( typeof options.secure === 'boolean' && options.secure )
+			if( options.secure === true )
 			{
-				returnValue = options.secure;
+				returnValue.secure = options.secure;
 			}
 		}
 
