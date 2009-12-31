@@ -14,6 +14,10 @@
 		<div>
 			<form id="testform" action="" method="post">
 					<p><input type="text" name="testCookifyInput" id="testCookifyInput" value="" /></p>
+					<p><input type="checkbox" name="testCookifyCheckboxC" id="testCookifyCheckboxC" value="" checked="checked" /></p>
+					<p><input type="checkbox" name="testCookifyCheckboxU" id="testCookifyCheckboxU" value="" /></p>
+					<p><input type="radio" name="testCookifyRadioC" id="testCookifyRadioC" value="" checked="checked" /></p>
+					<p><input type="radio" name="testCookifyRadioU" id="testCookifyRadioU" value="" /></p>
 					<p><textarea name="testCookifyTextarea" id="testCookifyTextarea"></textarea></p>
 					<p>
 						<select name="testCookifySelect" id="testCookifySelect">
@@ -25,6 +29,10 @@
 					<p id="testCookifyParagraph"></p>
 					
 					<p><input type="text" name="testCookieFillInput" id="testCookieFillInput" value="" /></p>
+					<p><input type="checkbox" name="testCookiFillCheckboxC" id="testCookiFillCheckboxC" value="Value for cookie fill checkbox check" /></p>
+					<p><input type="checkbox" name="testCookiFillCheckboxU" id="testCookiFillCheckboxU" value="Value for cookie fill checkbox uncheck" checked="checked" /></p>
+					<p><input type="radio" name="testCookiFillRadioC" id="testCookiFillRadioC" value="Value for cookie fill radio check" /></p>
+					<p><input type="radio" name="testCookiFillRadioU" id="testCookiFillRadioU" value="Value for cookie fill radio uncheck" checked="checked" /></p>
 					<p><textarea name="testCookieFillTextarea" id="testCookieFillTextarea"></textarea></p>
 					<p>
 						<select name="testCookieFillSelect" id="testCookieFillSelect">
@@ -36,6 +44,10 @@
 					<p id="testCookieFillParagraph"></p>
 
 					<p><input type="text" name="testCookieBindInput" id="testCookieBindInput" value="" /></p>
+					<p><input type="checkbox" name="testCookieBindCheckboxC" id="testCookieBindCheckboxC" value="First value for cookie bind checkbox" /></p>
+					<p><input type="checkbox" name="testCookieBindCheckboxU" id="testCookieBindCheckboxU" value="VALUE" checked="checked" /></p>
+					<p><input type="radio" name="testCookieBindRadioC" id="testCookieBindRadioC" value="First value for cookie bind radio" /></p>
+					<p><input type="radio" name="testCookieBindRadioU" id="testCookieBindRadioU" value="VALUE" checked="checked" /></p>
 					<p><textarea name="testCookieBindTextarea" id="testCookieBindTextarea"></textarea></p>
 					<p>
 						<select name="testCookieBindSelect" id="testCookieBindSelect">
@@ -195,6 +207,22 @@
 						fireunit.compare( 'Value for cookify input', $.cookies.get( 'testCookifyInput' ), 'Does cookify() method set correct value on an input?' );
 						$.cookies.del( 'testCookifyInput' );
 
+						$( '#testCookifyCheckboxC' ).val( 'Value for cookify checked checkbox' ).cookify();
+						fireunit.compare( 'Value for cookify checked checkbox', $.cookies.get( 'testCookifyCheckboxC' ), 'Does cookify() method set correct value on a checked checkbox?' );
+						$.cookies.del( 'testCookifyCheckboxC' );
+
+						$( '#testCookifyCheckboxU' ).val( 'Value for cookify unchecked checkbox' ).cookify();
+						fireunit.compare( null, $.cookies.get( 'testCookifyCheckboxU' ), 'Does cookify() method set correct value on an unchecked checkbox?' );
+						$.cookies.del( 'testCookifyCheckboxU' );
+
+						$( '#testCookifyRadioC' ).val( 'Value for cookify checked radio' ).cookify();
+						fireunit.compare( 'Value for cookify checked radio', $.cookies.get( 'testCookifyRadioC' ), 'Does cookify() method set correct value on a checked radio?' );
+						$.cookies.del( 'testCookifyRadioC' );
+
+						$( '#testCookifyRadioU' ).val( 'Value for cookify unchecked radio' ).cookify();
+						fireunit.compare( null, $.cookies.get( 'testCookifyRadioU' ), 'Does cookify() method set correct value on an unchecked radio?' );
+						$.cookies.del( 'testCookifyRadioU' );
+
 						$( '#testCookifyTextarea' ).val( 'Value for cookify textarea' ).cookify();
 						fireunit.compare( 'Value for cookify textarea', $.cookies.get( 'testCookifyTextarea' ), 'Does cookify() method set correct value on a textarea?' );
 						$.cookies.del( 'testCookifyTextarea' );
@@ -212,6 +240,26 @@
 						$( '#testCookieFillInput' ).cookieFill();
 						fireunit.compare( 'Value for cookie fill input', $( '#testCookieFillInput' ).val(), 'Does cookieFill() method fill correct field with correct value for input?' );
 						$.cookies.del( 'testCookieFillInput' );
+
+						$.cookies.set( 'testCookiFillCheckboxC', 'Value for cookie fill checkbox check' );
+						$( '#testCookiFillCheckboxC' ).cookieFill();
+						fireunit.compare( true, $( '#testCookiFillCheckboxC' ).attr( 'checked' ), 'Does cookiFill() method checked checkbox correctly?' );
+						$.cookies.del( 'testCookiFillCheckboxC' );
+
+						$.cookies.set( 'testCookiFillCheckboxU', 'garbage' );
+						$( '#testCookiFillCheckboxU' ).cookieFill();
+						fireunit.compare( false, $( '#testCookiFillCheckboxU' ).attr( 'checked' ), 'Does cookiFill() method uncheck checkbox correctly?' );
+						$.cookies.del( 'testCookiFillCheckboxU' );
+
+						$.cookies.set( 'testCookiFillRadioC', 'Value for cookie fill radio check' );
+						$( '#testCookiFillRadioC' ).cookieFill();
+						fireunit.compare( true, $( '#testCookiFillRadioC' ).attr( 'checked' ), 'Does cookiFill() method checked radio correctly?' );
+						$.cookies.del( 'testCookiFillRadioC' );
+
+						$.cookies.set( 'testCookiFillRadioU', 'garbage' );
+						$( '#testCookiFillRadioU' ).cookieFill();
+						fireunit.compare( false, $( '#testCookiFillRadioU' ).attr( 'checked' ), 'Does cookiFill() method uncheck radio correctly?' );
+						$.cookies.del( 'testCookiFillRadioU' );
 
 						$.cookies.set( 'testCookieFillTextarea', 'Value for cookie fill textarea' );
 						$( '#testCookieFillTextarea' ).cookieFill();
@@ -235,6 +283,34 @@
 						$( '#testCookieBindInput' ).val( 'Second value for cookie bind input' ).change();
 						fireunit.compare( 'Second value for cookie bind input', $.cookies.get( 'testCookieBindInput' ), 'Does cookieBind() method set correct cookie when field changes for input?' );
 						$.cookies.del( 'testCookieBindInput' );
+
+						$.cookies.set( 'testCookieBindCheckboxC', 'First value for cookie bind checkbox' );
+						$( '#testCookieBindCheckboxC' ).cookieBind();
+						fireunit.compare( true, $( '#testCookieBindCheckboxC' ).attr( 'checked' ), 'Does cookieBind() method check correct checkbox?' );
+						$( '#testCookieBindCheckboxC' ).removeAttr( 'checked' ).change();
+						fireunit.compare( null, $.cookies.get( 'testCookieBindCheckboxC' ), 'Does cookieBind() method remove cookie when checkbox is unchecked?' );
+						$.cookies.del( 'testCookieBindCheckboxC' );
+
+						$.cookies.set( 'testCookieBindCheckboxU', 'First value for cookie bind checkbox' );
+						$( '#testCookieBindCheckboxU' ).cookieBind();
+						fireunit.compare( false, $( '#testCookieBindCheckboxU' ).attr( 'checked' ), 'Does cookieBind() method uncheck correct checkbox?' );
+						$( '#testCookieBindCheckboxU' ).attr( 'checked', true ).change();
+						fireunit.compare( 'VALUE', $.cookies.get( 'testCookieBindCheckboxU' ), 'Does cookieBind() method set correct cookie when checkbox is checked?' );
+						$.cookies.del( 'testCookieBindCheckboxU' );
+
+						$.cookies.set( 'testCookieBindRadioC', 'First value for cookie bind radio' );
+						$( '#testCookieBindRadioC' ).cookieBind();
+						fireunit.compare( true, $( '#testCookieBindRadioC' ).attr( 'checked' ), 'Does cookieBind() method check correct radio?' );
+						$( '#testCookieBindRadioC' ).removeAttr( 'checked' ).change();
+						fireunit.compare( null, $.cookies.get( 'testCookieBindRadioC' ), 'Does cookieBind() method remove cookie when radio is unchecked?' );
+						$.cookies.del( 'testCookieBindRadioC' );
+
+						$.cookies.set( 'testCookieBindRadioU', 'First value for cookie bind radio' );
+						$( '#testCookieBindRadioU' ).cookieBind();
+						fireunit.compare( false, $( '#testCookieBindRadioU' ).attr( 'checked' ), 'Does cookieBind() method uncheck correct radio?' );
+						$( '#testCookieBindRadioU' ).attr( 'checked', true ).change();
+						fireunit.compare( 'VALUE', $.cookies.get( 'testCookieBindRadioU' ), 'Does cookieBind() method set correct cookie when radio is checked?' );
+						$.cookies.del( 'testCookieBindRadioU' );
 
 						$.cookies.set( 'testCookieBindTextarea', 'First value for cookie bind textarea' );
 						$( '#testCookieBindTextarea' ).cookieBind();
