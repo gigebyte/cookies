@@ -2,5 +2,6 @@
 #labels Featured,Phase-Support
 
 = What to do if you're having problems =
-
-Please read the [http://code.google.com/p/cookies/wiki/Documentation documentation] on this project.  If you're having problems, search the [http://code.google.com/p/cookies/issues/list issues] to see if problems have been reported and/or resolved.  If these steps do not provide resolution for your problem, please open an issue.
+  # Please read the [http://code.google.com/p/cookies/wiki/Documentation documentation] on this project.
+  # Search the [http://code.google.com/p/cookies/issues/list issues] to see if problems have been reported and/or resolved.
+  # Open an issue to ask for help, report a bug, or request enhancements. Providing patches for bugs and enhancements is appreciated.
