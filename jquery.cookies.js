@@ -108,7 +108,7 @@ jaaulde.utils.cookies = ( function()
 			{
 				value = decodeURIComponent( pair[1] );
 			}
-			catch( e )
+			catch( e1 )
 			{
 				value = pair[1];
 			}
@@ -120,7 +120,7 @@ jaaulde.utils.cookies = ( function()
 					unparsedValue = value;
 					value = JSON.parse( value );
 				}
-				catch( e )
+				catch( e2 )
 				{
 					value = unparsedValue;
 				}
@@ -319,8 +319,7 @@ jaaulde.utils.cookies = ( function()
 
 			var extensions = {
 				/**
-				* $( 'selector' ).cookify - set the value of an input field or the innerHTML of an element to a cookie by the name or id of the field or element
-				*                           (radio and checkbox not yet supported)
+				* $( 'selector' ).cookify - set the value of an input field, or the innerHTML of an element, to a cookie by the name or id of the field or element
 				*                           (field or element MUST have name or id attribute)
 				*
 				* @access public
@@ -331,50 +330,40 @@ jaaulde.utils.cookies = ( function()
 				{
 					return this.each( function()
 					{
-						var i, resolvedName = false, resolvedValue = false, name = '', value = '', nameAttrs = ['name', 'id'], nodeName, inputType;
+						var i, nameAttrs = ['name', 'id'], name, $this = $( this ), value;
 
 						for( i in nameAttrs )
 						{
 							if( ! isNaN( i ) )
 							{
-								name = $( this ).attr( nameAttrs[ i ] );
+								name = $this.attr( nameAttrs[ i ] );
 								if( typeof name === 'string' && name !== '' )
 								{
-									resolvedName = true;
+									if( $this.is( ':checkbox, :radio' ) )
+									{
+										if( $this.attr( 'checked' ) )
+										{
+											value = $this.val();
+										}
+									}
+									else if( $this.is( ':input' ) )
+									{
+										value = $this.val();
+									}
+									else
+									{
+										value = $this.html();
+									}
+
+									if( typeof value !== 'string' || value === '' )
+									{
+										value = null;
+									}
+
+									$.cookies.set( name, value, options );
+
 									break;
 								}
-							}
-						}
-
-						if( resolvedName )
-						{
-							nodeName = this.nodeName.toLowerCase();
-							if( nodeName !== 'input' && nodeName !== 'textarea' && nodeName !== 'select' && nodeName !== 'img' )
-							{
-								value = $( this ).html();
-								resolvedValue = true;
-							}
-							else
-							{
-								inputType = $( this ).attr( 'type' );
-								if( typeof inputType === 'string' && inputType !== '' )
-								{
-									inputType = inputType.toLowerCase();
-								}
-								if( inputType !== 'radio' && inputType !== 'checkbox' )
-								{
-									value = $( this ).val();
-									resolvedValue = true;
-								}
-							}
-
-							if( resolvedValue )
-							{
-								if( typeof value !== 'string' || value === '' )
-								{
-									value = null;
-								}
-								$.cookies.set( name, value, options );
 							}
 						}
 					} );
@@ -389,39 +378,46 @@ jaaulde.utils.cookies = ( function()
 				{
 					return this.each( function()
 					{
-						var i, resolvedName = false, name = '', value, nameAttrs = ['name', 'id'], iteration = 0, nodeName;
+						var n, getN, nameAttrs = ['name', 'id'], name, $this = $( this ), value;
 
-						for( i in nameAttrs )
+						getN = function()
 						{
-							if( ! isNaN( i ) )
+							n = nameAttrs.pop();
+							return !! n;
+						};
+
+						while( getN() )
+						{
+							name = $this.attr( n );
+							if( typeof name === 'string' && name !== '' )
 							{
-								name = $( this ).attr( nameAttrs[ i ] );
-								if( typeof name === 'string' && name !== '' )
+								value = $.cookies.get( name );
+								if( value !== null )
 								{
-									resolvedName = true;
-									break;
+									if( $this.is( ':checkbox, :radio' ) )
+									{
+										if( $this.val() === value )
+										{
+											$this.attr( 'checked', 'checked' );
+										}
+										else
+										{
+											$this.removeAttr( 'checked' );
+										}
+									}
+									else if( $this.is( ':input' ) )
+									{
+										$this.val( value );
+									}
+									else
+									{
+										$this.html( value );
+									}
 								}
+								
+								break;
 							}
 						}
-
-						if( resolvedName )
-						{
-							value = $.cookies.get( name );
-							if( value !== null )
-							{
-								nodeName = this.nodeName.toLowerCase();
-								if( nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select' )
-								{
-									$( this ).val( value );
-								}
-								else
-								{
-									$( this ).html( value );
-								}
-							}
-						}
-
-						iteration = 0;
 					} );
 				},
 				/**
@@ -435,9 +431,10 @@ jaaulde.utils.cookies = ( function()
 				{
 					return this.each( function()
 					{
-						$( this ).cookieFill().change( function()
+						var $this = $( this );
+						$this.cookieFill().change( function()
 						{
-							$( this ).cookify( options );
+							$this.cookify( options );
 						} );
 					} );
 				}
