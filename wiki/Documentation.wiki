@@ -3,6 +3,8 @@
 
 = How to use jquery.cookies.js =
 
+[http://code.google.com/p/cookies/wiki/Documentation#without_jquery Without jQuery] | [http://code.google.com/p/cookies/wiki/Documentation#with_jquery With jQuery]
+
 == Without jQuery ==
 
 If jQuery is not available in your page, the core cookies library is available to you under the _jaaulde.utils_ namespace:
@@ -14,7 +16,7 @@ If jQuery is not available in your page, the core cookies library is available t
  *
  * @access public
  * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
- * @return Mixed - String:if single cookie requested and found; Null:if single cookie requested and not found; Object:hash of multiple or all cookies
+ * @return Mixed - Null:if single requested cookie(s) not found; Object:hash of multiple or all cookies (if multiple or all requested); Or, if cookie requested, whatever data type the cookie was on set should return w/ get (Thanks to built in JSON encoding)
  */
 get = function(cookieName)
 }}}
