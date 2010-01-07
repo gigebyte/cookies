@@ -4,13 +4,16 @@
 = How to use jquery.cookies.js =
 
  * [#Without_jQuery Without jQuery]
- * [http://code.google.com/p/cookies/wiki/Documentation#With_jQuery With jQuery]
+ * [#With_jQuery With jQuery]
 
- * [http://code.google.com/p/cookies/wiki/Documentation#Get_a_cookie Get a cookie]
- * [http://code.google.com/p/cookies/wiki/Documentation#Get_Filtered_list_of_cookies Get Filtered list of cookies]
- * [http://code.google.com/p/cookies/wiki/Documentation#Set_a_cookie Set a cookie]
- * [http://code.google.com/p/cookies/wiki/Documentation#Delete_a_cookie Delete a cookie]
- * [http://code.google.com/p/cookies/wiki/Documentation#Test_if_browser_is_accepting_cookies Test if browser is accepting cookies]
+ * [#Get_a_cookie Get a cookie]
+ * [#Get_Filtered_list_of_cookies Get Filtered list of cookies]
+ * [#Set_a_cookie Set a cookie]
+ * [#Delete_a_cookie Delete a cookie]
+ * [#Test_if_browser_is_accepting_cookies Test if browser is accepting cookies]
+ * [#Set_default_options_to_use_when_none_are_specified Set default options to use when none are specified]
+
+ * [#Options_object] Options object
 
 == Without jQuery ==
 
