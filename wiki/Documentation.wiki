@@ -112,7 +112,7 @@ setOptions = function(options)
 
 == With jQuery ==
 
-If jQuery is available, then all of the above methods are available to you under the _jQuery.cookies_ (or _$.cookies_ ) namespace:
+If jQuery is available, then all of the [http://code.google.com/p/cookies/wiki/Documentation#Without_jQuery above methods] are available to you under the _jQuery.cookies_ (or _$.cookies_ ) namespace:
  * `$.cookies.get()`
  * `$.cookies.filter()`
  * `$.cookies.set()`
