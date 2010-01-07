@@ -13,7 +13,7 @@
  * [#Test_if_browser_is_accepting_cookies Test if browser is accepting cookies]
  * [#Set_default_options_to_use_when_none_are_specified Set default options to use when none are specified]
 
- * [#Options_object] Options object
+ * [#Options_object Options object]
 
 == Without jQuery ==
 
