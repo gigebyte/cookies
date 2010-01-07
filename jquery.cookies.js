@@ -1,11 +1,11 @@
 /**
-* Copyright (c) 2005 - 2009, James Auldridge
-* All rights reserved.
-*
-* Licensed under the BSD, MIT, and GPL (your choice!) Licenses:
-*  http://code.google.com/p/cookies/wiki/License
-*
-*/
+ * Copyright (c) 2005 - 2010, James Auldridge
+ * All rights reserved.
+ *
+ * Licensed under the BSD, MIT, and GPL (your choice!) Licenses:
+ *  http://code.google.com/p/cookies/wiki/License
+ *
+ */
 var jaaulde = window.jaaulde || {};
 jaaulde.utils = jaaulde.utils || {};
 jaaulde.utils.cookies = ( function()
@@ -90,7 +90,7 @@ jaaulde.utils.cookies = ( function()
 		);
 	};
 	/**
-	* parseCookies - retrieve document.cookie string and break it into a hash
+	* parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
 	*
 	* @access private
 	* @static
@@ -134,12 +134,12 @@ jaaulde.utils.cookies = ( function()
 	constructor = function(){};
 
 	/**
-	* get - get one, several, or all cookies
-	*
-	* @access public
-	* @paramater cookieName MIXED - STRING:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
-	* @return MIXED - STRING:if single cookie requested and found; null:if single cookie requested and not found; OBJECT:hash of multiple or all cookies
-	*/
+	 * get - get one, several, or all cookies
+	 *
+	 * @access public
+	 * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
+	 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
+	 */
 	constructor.prototype.get = function( cookieName )
 	{
 		var returnValue, item, cookies = parseCookies();
@@ -171,12 +171,12 @@ jaaulde.utils.cookies = ( function()
 		return returnValue;
 	};
 	/**
-	* filter - get array of cookies whose names match the provided RegExp
-	*
-	* @access public
-	* @paramater cookieNameRegExp RegExp - The regular expression to match against cookie names
-	* @return MIXED - OBJECT:hash of cookies whose names match the RegExp
-	*/
+	 * filter - get array of cookies whose names match the provided RegExp
+	 *
+	 * @access public
+	 * @paramater Object RegExp - The regular expression to match against cookie names
+	 * @return Mixed - Object:hash of cookies whose names match the RegExp
+	 */
 	constructor.prototype.filter = function( cookieNameRegExp )
 	{
 		var cookieName, returnValue = {}, cookies = parseCookies();
@@ -197,14 +197,14 @@ jaaulde.utils.cookies = ( function()
 		return returnValue;
 	};
 	/**
-	* set - set or delete a cookie with desired options
-	*
-	* @access public
-	* @paramater cookieName STRING - name of cookie to set
-	* @paramater value MIXED - STRING:value to assign cookie if setting, null:if deleting
-	* @paramater options OBJECT - optional list of cookie options to specify (hoursToLive, path, domain, secure)
-	* @return void
-	*/
+	 * set - set or delete a cookie with desired options
+	 *
+	 * @access public
+	 * @paramater String cookieName - name of cookie to set
+	 * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded; NULL to delete
+	 * @paramater Object options - optional list of cookie options to specify
+	 * @return void
+	 */
 	constructor.prototype.set = function( cookieName, value, options )
 	{
 		if( typeof options !== 'object' || options === null )
@@ -236,13 +236,13 @@ jaaulde.utils.cookies = ( function()
 		document.cookie = cookieName + '=' + encodeURIComponent( value ) + optionsString;
 	};
 	/**
-	* del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
-	*
-	* @access public
-	* @paramater cookieName MIXED - String name of cookie to delete, or Bool true to delete all
-	* @paramater options OBJECT - optional list of cookie options to specify ( path, domain )
-	* @return void
-	*/
+	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
+	 *
+	 * @access public
+	 * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
+	 * @paramater Object options - optional list of cookie options to specify ( path, domain )
+	 * @return void
+	 */
 	constructor.prototype.del = function( cookieName, options )
 	{
 		var allCookies = {}, name;
@@ -270,11 +270,11 @@ jaaulde.utils.cookies = ( function()
 		}
 	};
 	/**
-	* test - test whether the browser is accepting cookies
-	*
-	* @access public
-	* @return BOOL
-	*/
+	 * test - test whether the browser is accepting cookies
+	 *
+	 * @access public
+	 * @return Boolean
+	 */
 	constructor.prototype.test = function()
 	{
 		var returnValue = false, testName = 'cT', testValue = 'data';
@@ -290,12 +290,12 @@ jaaulde.utils.cookies = ( function()
 		return returnValue;
 	};
 	/**
-	* setOptions - set default options for calls to cookie methods
-	*
-	* @access public
-	* @param options OBJECT - list of cookie options to specify (hoursToLive, path, domain, secure)
-	* @return void
-	*/
+	 * setOptions - set default options for calls to cookie methods
+	 *
+	 * @access public
+	 * @param Object options - list of cookie options to specify
+	 * @return void
+	 */
 	constructor.prototype.setOptions = function( options )
 	{
 		if( typeof options !== 'object' )
