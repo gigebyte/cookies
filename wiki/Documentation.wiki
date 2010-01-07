@@ -3,7 +3,7 @@
 
 = How to use jquery.cookies.js =
 
- * [http://code.google.com/p/cookies/wiki/Documentation#Without_jQuery Without jQuery]
+ * [#Without_jQuery Without jQuery]
  * [http://code.google.com/p/cookies/wiki/Documentation#With_jQuery With jQuery]
 
  * [http://code.google.com/p/cookies/wiki/Documentation#Get_a_cookie Get a cookie]
