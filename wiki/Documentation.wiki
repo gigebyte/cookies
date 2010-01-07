@@ -3,7 +3,8 @@
 
 = How to use jquery.cookies.js =
 
-[http://code.google.com/p/cookies/wiki/Documentation#Without_jQuery Without jQuery] | [http://code.google.com/p/cookies/wiki/Documentation#With_jQuery With jQuery]
+ * [http://code.google.com/p/cookies/wiki/Documentation#Without_jQuery Without jQuery]
+ * [http://code.google.com/p/cookies/wiki/Documentation#With_jQuery With jQuery]
 
 == Without jQuery ==
 
@@ -20,6 +21,7 @@ If jQuery is not available in your page, the core cookies library is available t
  */
 get = function(cookieName)
 }}}
+====Example:====
  * `jaaulde.utils.cookies.get('myCookie');`
   * returns value of myCookie if it is present, null if not
  * `jaaulde.utils.cookies.get(['myCookie', 'myOtherCookie']);`
@@ -38,6 +40,7 @@ get = function(cookieName)
  */
 filter = function( cookieNameRegExp )
 }}}
+====Example:====
  * `jaaulde.utils.cookies.filter( /^site/ );`
   * returns list of cookies whose names start with "site"
 
@@ -54,6 +57,7 @@ filter = function( cookieNameRegExp )
  */
 set = function(cookieName, value, options)
 }}}
+====Example:====
  * `jaaulde.utils.cookies.set('myCookie', 'myValue');`
   * sets cookie by the name of 'myCookie' to value of 'myValue' with default options
  * `jaaulde.utils.cookies.set('myCookie', 'myValue', {path: '/somedir'});`
@@ -72,6 +76,7 @@ set = function(cookieName, value, options)
  */
 del = function(cookieName, options)
 }}}
+====Example:====
  * `jaaulde.utils.cookies.del('myCookie');`
   * deletes a cookie, 'myCookie', with default options
  * `jaaulde.utils.cookies.del('myCookie', {path: '/somedir'});`
@@ -92,6 +97,7 @@ del = function(cookieName, options)
  */
 test = function()
 }}}
+====Example:====
  * `jaaulde.utils.cookies.test();`
   * attempts to set a cookie and returns true or false upon success or failure
 
@@ -106,6 +112,7 @@ test = function()
  */
 setOptions = function(options)
 }}}
+====Example:====
  * `jaaulde.utils.cookies.setOptions({path: '/somedir'});`
   * all cookies will be set or deleted with the path , '/somedir', unless it is explicitly provided in a passed options object
  * *See information on options object below*
