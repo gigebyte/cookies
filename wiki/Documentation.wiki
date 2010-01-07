@@ -145,9 +145,12 @@ The options object has four properties:
   * *path*
    * STRING
    * For which path should the cookie be available
-  * *hoursToLive*
+  * *hoursToLive (DEPRECATED for expiresAt)*
    * NUMBER
    * For how many hours should the cookie be valid? (Passing 0 means to delete the cookie at the end of the browser session--this is default.  Negative values will delete the cookie, but you should use the del() method instead.)
+  * *expiresAt*
+   * Date obj
+   * Date object representing expiration date/time of cookie
   * *secure*
    * BOOL
    * Should cookie be sent to server via HTTPS _only_?
@@ -158,7 +161,7 @@ The structure of the object is as follows:
   var newOptions = {
     domain: '*.mydomain.com',
     path: '/somedir',
-    hoursToLive: 24,
+    expiresAt: new Date( 2011, 1, 1 ),
     secure: true
   }
 }}}
