@@ -149,7 +149,7 @@ The options object has four properties:
    * NUMBER
    * For how many hours should the cookie be valid? (Passing 0 means to delete the cookie at the end of the browser session--this is default.  Negative values will delete the cookie, but you should use the del() method instead.)
   * *expiresAt*
-   * Date obj
+   * Date OBJECT
    * Date object representing expiration date/time of cookie
   * *secure*
    * BOOL
