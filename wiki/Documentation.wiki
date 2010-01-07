@@ -16,7 +16,7 @@ If jQuery is not available in your page, the core cookies library is available t
  *
  * @access public
  * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
- * @return Mixed - Null:if single requested cookie(s) not found; Object:hash of multiple or all cookies (if multiple or all requested); Or, if cookie requested, whatever data type the cookie was on set should return w/ get (Thanks to built in JSON encoding)
+ * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
  */
 get = function(cookieName)
 }}}
@@ -48,7 +48,7 @@ filter = function( cookieNameRegExp )
  *
  * @access public
  * @paramater String cookieName - name of cookie to set
- * @paramater Mixed value - Null:if deleting, String:value to assign cookie if setting
+ * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded; NULL to delete
  * @paramater Object options - optional list of cookie options to specify
  * @return void
  */
@@ -124,11 +124,11 @@ In addition, there are some jQuery function additions for helping automate some 
 
  * *Set the value of a form field or the HTML of an element to a cookie named after the field's/element's name or id attribute*
   * `$('#username').cookify();`
-   * The value of the field, or HTML of the element, with id "username" is set to a cookie named after the name or id attribute of that field/element
+   * The value of the field, or HTML of the element, with id "username" is set to a cookie named after the name or id attribute of that field/element. If a radio or checkbox and it's checked, the value will be set.
 
  * *Fill a field's value, or an element's innerHTML with the value of a cookie*
   * `$('#username').cookieFill();`
-   * Set the value of the input, or HTML of the element, with id, 'username', to the value of a cookie by the same name
+   * Set the value of the input, or HTML of the element, with id, 'username', to the value of a cookie by the same name.  If a radio or checkbox and it is checked, the cookie will be set.  If not checked, the cookie will be deleted.
 
  * *Bind an input to the cookies library*
   * `$('#username').cookieBind();`
