@@ -6,6 +6,12 @@
  * [http://code.google.com/p/cookies/wiki/Documentation#Without_jQuery Without jQuery]
  * [http://code.google.com/p/cookies/wiki/Documentation#With_jQuery With jQuery]
 
+ * [http://code.google.com/p/cookies/wiki/Documentation#Get_a_cookie Get a cookie]
+ * [http://code.google.com/p/cookies/wiki/Documentation#Get_Filtered_list_of_cookies Get Filtered list of cookies]
+ * [http://code.google.com/p/cookies/wiki/Documentation#Set_a_cookie Set a cookie]
+ * [http://code.google.com/p/cookies/wiki/Documentation#Delete_a_cookie Delete a cookie]
+ * [http://code.google.com/p/cookies/wiki/Documentation#Test_if_browser_is_accepting_cookies Test if browser is accepting cookies]
+
 == Without jQuery ==
 
 If jQuery is not available in your page, the core cookies library is available to you under the _jaaulde.utils_ namespace:
