@@ -1,5 +1,3 @@
-#How to provide JSON support to this library
-
 = JSON Support =
 
 Many of the latest browsers now have support for *[http://www.json.org/ JSON]* serialization and unserialization.  The API's primary methods are JSON.stringify (serialize) and JSON.parse (unserialize).  Douglas Crockford has a library (*[http://www.json.org/json2.js json2.js]*) available to provide this API in browsers which do not yet have it.  json2.js is written in such a way that it checks for the presence of the API before attempting to insert it, so in browsers which already have it available you'll have the benefit of fast native parsing.
