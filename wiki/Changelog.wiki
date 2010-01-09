@@ -1,7 +1,7 @@
 =Change Log=
 
 ==2.1.0 -> 2.2.0 (06 Jan 10)==
- * Added JSON support to store all value types
+ * Added [http://code.google.com/p/cookies/wiki/JSON JSON support] to store all value types
  * Added support for radio and checkbox jQuery binding
  * Added expiresAt param as date object to deprecate hoursToLive option
  * More efficient jQuery selector usage
