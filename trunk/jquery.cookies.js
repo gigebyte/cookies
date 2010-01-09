@@ -201,7 +201,7 @@ jaaulde.utils.cookies = ( function()
 	 *
 	 * @access public
 	 * @paramater String cookieName - name of cookie to set
-	 * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded; NULL to delete
+	 * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded (http://code.google.com/p/cookies/wiki/JSON); NULL to delete
 	 * @paramater Object options - optional list of cookie options to specify
 	 * @return void
 	 */
