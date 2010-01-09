@@ -1,4 +1,4 @@
-#labels Featured,Phase-QA
+#labels Phase-QA
 = Testing jquery.cookies.js from SVN =
 I've made some enhancements in recent commits to the library that I'd like to have some help in testing.  There are two types of testing which would help:
 
