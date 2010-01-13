@@ -5,6 +5,7 @@
 
  * [#Without_jQuery Without jQuery]
  * [#With_jQuery With jQuery]
+ * [http://code.google.com/p/cookies/wiki/JSON JSON Support]
 
  * [#Get_a_cookie Get a cookie]
  * [#Get_Filtered_list_of_cookies Get Filtered list of cookies]
