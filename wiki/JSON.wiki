@@ -1,7 +1,7 @@
 = JSON Support =
 
 ==IMPORTANT==
-===To set a non-string value to a cookie, the standard [[http://www.json.org/ JSON] API must be available to the library.===
+===To set a non-string value to a cookie, the standard [http://www.json.org/ JSON] API must be available to the library.===
 
 ==More Information==
 Many of the latest browsers now have native support for JSON serialization and unserialization.  The API's primary methods are JSON.stringify (serialize) and JSON.parse (unserialize).  To ensure every browser your code lands in has the API, you need to provide a JSON library which will enhance browsers that are missing the functionality.
