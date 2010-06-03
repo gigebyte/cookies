@@ -348,40 +348,43 @@ jaaulde.utils.cookies = ( function()
 				{
 					return this.each( function()
 					{
-						var i, nameAttrs = ['name', 'id'], name, $this = $( this ), value;
+						var n, nameAttrs = ['name', 'id'], name, $this = $( this ), value;
 
-						for( i in nameAttrs )
+						getN = function()
 						{
-							if( ! isNaN( i ) )
+							n = nameAttrs.shift();
+							return !! n;
+						};
+
+						while( getN() )
+						{
+							name = $this.attr( n );
+							if( typeof name === 'string' && name !== '' )
 							{
-								name = $this.attr( nameAttrs[ i ] );
-								if( typeof name === 'string' && name !== '' )
+								if( $this.is( ':checkbox, :radio' ) )
 								{
-									if( $this.is( ':checkbox, :radio' ) )
-									{
-										if( $this.attr( 'checked' ) )
-										{
-											value = $this.val();
-										}
-									}
-									else if( $this.is( ':input' ) )
+									if( $this.attr( 'checked' ) )
 									{
 										value = $this.val();
 									}
-									else
-									{
-										value = $this.html();
-									}
-
-									if( typeof value !== 'string' || value === '' )
-									{
-										value = null;
-									}
-
-									$.cookies.set( name, value, options );
-
-									break;
 								}
+								else if( $this.is( ':input' ) )
+								{
+									value = $this.val();
+								}
+								else
+								{
+									value = $this.html();
+								}
+
+								if( typeof value !== 'string' || value === '' )
+								{
+									value = null;
+								}
+
+								$.cookies.set( name, value, options );
+
+								break;
 							}
 						}
 					} );
@@ -400,7 +403,7 @@ jaaulde.utils.cookies = ( function()
 
 						getN = function()
 						{
-							n = nameAttrs.pop();
+							n = nameAttrs.shift();
 							return !! n;
 						};
 
