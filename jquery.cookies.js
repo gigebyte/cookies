@@ -10,12 +10,15 @@ var jaaulde = window.jaaulde || {};
 jaaulde.utils = jaaulde.utils || {};
 jaaulde.utils.cookies = ( function()
 {
-	var resolveOptions, assembleOptionsString, parseCookies, constructor, defaultOptions = {
+	var resolveOptions, assembleOptionsString, parseCookies, constructor, defaultOptions;
+
+	defaultOptions = {
 		expiresAt: null,
 		path: '/',
 		domain:  null,
 		secure: false
 	};
+
 	/**
 	* resolveOptions - receive an options object and ensure all options are present and valid, replacing with defaults where necessary
 	*
@@ -69,7 +72,7 @@ jaaulde.utils.cookies = ( function()
 		}
 
 		return returnValue;
-		};
+	};
 	/**
 	* assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
 	*
@@ -98,7 +101,11 @@ jaaulde.utils.cookies = ( function()
 	*/
 	parseCookies = function()
 	{
-		var cookies = {}, i, pair, name, value, separated = document.cookie.split( ';' ), unparsedValue;
+		var cookies, i, pair, name, value, separated, unparsedValue;
+		
+		cookies = {};
+		separated = document.cookie.split( ';' );
+
 		for( i = 0; i < separated.length; i = i + 1 )
 		{
 			pair = separated[i].split( '=' );
@@ -142,7 +149,9 @@ jaaulde.utils.cookies = ( function()
 	 */
 	constructor.prototype.get = function( cookieName )
 	{
-		var returnValue, item, cookies = parseCookies();
+		var returnValue, item, cookies;
+
+		cookies = parseCookies()
 
 		if( typeof cookieName === 'string' )
 		{
@@ -179,7 +188,10 @@ jaaulde.utils.cookies = ( function()
 	 */
 	constructor.prototype.filter = function( cookieNameRegExp )
 	{
-		var cookieName, returnValue = {}, cookies = parseCookies();
+		var cookieName, returnValue, cookies;
+
+		returnValue = {};
+		cookies = parseCookies();
 
 		if( typeof cookieNameRegExp === 'string' )
 		{
@@ -245,7 +257,9 @@ jaaulde.utils.cookies = ( function()
 	 */
 	constructor.prototype.del = function( cookieName, options )
 	{
-		var allCookies = {}, name;
+		var allCookies, name;
+
+		allCookies = {};
 
 		if( typeof options !== 'object' || options === null )
 		{
@@ -277,7 +291,11 @@ jaaulde.utils.cookies = ( function()
 	 */
 	constructor.prototype.test = function()
 	{
-		var returnValue = false, testName = 'cT', testValue = 'data';
+		var returnValue, testName, testValue;
+
+		returnValue;
+		testName = 'cT';
+		testValue = 'data';
 
 		this.set( testName, testValue );
 
@@ -447,4 +465,4 @@ jaaulde.utils.cookies = ( function()
 
 		} )( window.jQuery );
 	}
-} )();
+}() );
