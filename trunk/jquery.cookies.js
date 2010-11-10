@@ -123,23 +123,25 @@
 		*/
 		parseCookies = function()
 		{
-			var cookies, i, pair, name, value, separated, unparsedValue;
+			var cookies, separated, i, splitOnEquals, name, rawValue, value, unparsedValue;
 		
 			cookies = {};
 			separated = document.cookie.split( ';' );
 
 			for( i = 0; i < separated.length; i = i + 1 )
 			{
-				pair = separated[i].split( '=' );
-				name = pair[0].replace( /^\s*/, '' ).replace( /\s*$/, '' );
+				splitOnEquals = separated[i].split( '=' );
+				
+				name = splitOnEquals.shift().replace( /^\s*/, '' ).replace( /\s*$/, '' );
+				rawValue = splitOnEquals.join( '=' );
 
 				try
 				{
-					value = decodeURIComponent( pair[1] );
+					value = decodeURIComponent( rawValue );
 				}
 				catch( e1 )
 				{
-					value = pair[1];
+					value = rawValue;
 				}
 
 				if( typeof JSON === 'object' && JSON !== null && typeof JSON.parse === 'function' )
