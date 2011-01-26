@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2005 - 2010, James Auldridge
+ * Copyright (c) 2005 - 2011, James Auldridge
  * All rights reserved.
  *
  * Licensed under the BSD, MIT, and GPL (your choice!) Licenses:
@@ -22,7 +22,12 @@
 {
 	"use strict";
 
-	var jaaulde;
+	var document, jaaulde;
+
+	/*
+	 * localize global variables which are used more than once
+	 */
+	document = global.document;
 
 	/*
 	 * jaaulde Namespace preparation - the only var introduced into global space
@@ -32,7 +37,10 @@
 
 	jaaulde.utils.cookies = ( function()
 	{
-		var defaultOptions, resolveOptions, assembleOptionsString, parseCookies, Constructor;
+			/* Private vars */
+		var defaultOptions,
+			/* Private functions */
+			resolveOptions, assembleOptionsString, isNaN, trim, parseCookies, Constructor;
 
 		defaultOptions = {
 			expiresAt: null,
@@ -43,7 +51,7 @@
 
 		/**
 		* resolveOptions - receive an options object and ensure all options are present and valid, replacing with defaults where necessary
-		*
+		*                  would prefer jQuery.extend here, but we want this library to work without jQuery
 		* @access private
 		* @static
 		* @parameter Object options - optional options to start with
@@ -72,7 +80,7 @@
 				}
 				else if( typeof options.hoursToLive === 'number' && options.hoursToLive !== 0 )
 				{
-					expireDate = new Date();
+					expireDate = new global.Date();
 					expireDate.setTime( expireDate.getTime() + ( options.hoursToLive * 60 * 60 * 1000 ) );
 					returnValue.expiresAt = expireDate;
 				}
@@ -115,52 +123,155 @@
 			);
 		};
 		/**
+		* trim - remove left and right whitespace
+		*             Some logic borrowed from http://jquery.com/
+		*
+		* @access private
+		* @static
+		* @parameter data STRING
+		* @return STRING
+		*/
+		trim = global.String.prototype.trim ?
+			function( data )
+			{
+				return global.String.prototype.trim.call( data );
+			}:
+			( function()
+			{
+				var trimLeft, trimRight;
+
+				trimLeft = /^\s+/;
+				trimRight = /\s+$/;
+
+				return function( data )
+				{
+					return data.replace( trimLeft, '' ).replace( trimRight, '' );
+				};
+			}() );
+		/**
+		* isNaN - check if given value is not a number
+		*         Borrowed from http://jquery.com/
+		*
+		* @access private
+		* @static
+		* @parameter obj MIXED
+		* @return BOOL
+		*/
+		isNaN = ( function()
+		{
+			var rdigit = /\d/, isNaN = global.isNaN;
+			return function( obj )
+			{
+				return ( obj === null || ! rdigit.test( obj ) || isNaN( obj ) );
+			};
+		}() );
+		/**
 		* parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
 		*
 		* @access private
 		* @static
 		* @return OBJECT - hash of cookies from document.cookie
 		*/
-		parseCookies = function()
+		parseCookies = ( function()
 		{
-			var cookies, separated, i, splitOnEquals, name, rawValue, value, unparsedValue;
-		
-			cookies = {};
-			separated = document.cookie.split( ';' );
+			var parseJSON, rbrace;
+			
+			parseJSON = global.JSON && global.JSON.parse
+				? ( function()
+				{
+					var rvalidchars, rvalidescape, rvalidtokens, rvalidbraces;
 
-			for( i = 0; i < separated.length; i = i + 1 )
+					rvalidchars = /^[\],:{}\s]*$/;
+					rvalidescape = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g;
+					rvalidtokens = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
+					rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g;
+
+					return function( data )
+					{
+						var returnValue, validJSON;
+
+						returnValue = null;
+
+						if( typeof data === 'string' && data !== '' )
+						{
+							// Make sure leading/trailing whitespace is removed (IE can't handle it)
+							data = trim( data );
+
+							if( data !== '' )
+							{
+								try
+								{
+									// Make sure the incoming data is actual JSON. Logic borrowed from http://json.org/json2.js
+									validJSON = rvalidchars.test( data.replace( rvalidescape, '@' ).replace( rvalidtokens, ']' ).replace( rvalidbraces, '' ) );
+
+									returnValue = validJSON ?
+										global.JSON.parse( data ) :
+										null;
+								}
+								catch( e1 )
+								{
+									returnValue = null;
+								}
+							}
+						}
+
+						return returnValue;
+					};
+				}() )
+				: function()
+				{
+					return null;
+				};
+
+			rbrace = /^(?:\{.*\}|\[.*\])$/;
+
+			return function()
 			{
-				splitOnEquals = separated[i].split( '=' );
-				
-				name = splitOnEquals.shift().replace( /^\s*/, '' ).replace( /\s*$/, '' );
-				rawValue = splitOnEquals.join( '=' );
+				var cookies, splitOnSemiColons, i, splitOnEquals, name, rawValue, value;
 
-				try
-				{
-					value = decodeURIComponent( rawValue );
-				}
-				catch( e1 )
-				{
-					value = rawValue;
-				}
+				cookies = {};
+				splitOnSemiColons = document.cookie.split( ';' );
 
-				if( typeof JSON === 'object' && JSON !== null && typeof JSON.parse === 'function' )
+				for( i = 0; i < splitOnSemiColons.length; i = i + 1 )
 				{
+					splitOnEquals = splitOnSemiColons[i].split( '=' );
+
+					name = trim( splitOnEquals.shift() );
+					rawValue = splitOnEquals.join( '=' );
+
 					try
 					{
-						unparsedValue = value;
-						value = JSON.parse( value );
+						value = decodeURIComponent( rawValue );
 					}
 					catch( e2 )
 					{
-						value = unparsedValue;
+						value = rawValue;
 					}
-				}
 
-				cookies[name] = value;
-			}
-			return cookies;
-		};
+					//Logic borrowed from http://jquery.com/ dataAttr method
+					try
+					{
+						value = value === 'true'
+								? true
+								: value === 'false'
+									? false
+									: value === 'null'
+										? null
+										: ! isNaN( value )
+											? parseFloat( value )
+											: rbrace.test( value )
+												? parseJSON( value )
+												: value;
+					} catch( e3 )
+					{
+						value = value;
+					}
+
+					cookies[name] = value;
+				}
+				return cookies;
+			};
+		}() );
 
 		Constructor = function(){};
 
@@ -317,7 +428,7 @@
 		{
 			var returnValue, testName, testValue;
 
-			testName = 'cT';
+			testName = 'cookiesCT';
 			testValue = 'data';
 
 			this.set( testName, testValue );
