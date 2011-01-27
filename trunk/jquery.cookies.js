@@ -218,16 +218,14 @@
 					//Logic borrowed from http://jquery.com/ dataAttr method
 					try {
 						value = value === 'true'
-								? true
-								: value === 'false'
-									? false
-									: value === 'null'
-										? null
-										: ! isNaN( value )
-											? parseFloat( value )
-											: rbrace.test( value )
-												? parseJSON( value )
-												: value;
+							? true
+							: value === 'false'
+								? false
+								: ! isNaN( value )
+									? parseFloat( value )
+									: rbrace.test( value )
+										? parseJSON( value )
+										: value;
 					} catch( e3 ) {
 						value = value;
 					}
@@ -311,11 +309,27 @@
 			if( typeof value === 'undefined' || value === null ) {
 				value = '';
 				options.hoursToLive = -8760;
-			} else if( typeof value !== 'string' ) {
-				if( typeof JSON === 'object' && JSON !== null && typeof JSON.stringify === 'function' ) {
-					value = JSON.stringify( value );
-				} else {
-					throw new Error( 'cookies.set() received non-string value and could not serialize.' );
+			}
+			else
+			{
+				//Logic borrowed from http://jquery.com/ dataAttr method and reversed
+				value = value === true
+						? 'true'
+						: value === false
+							? 'false'
+							: ! isNaN( value )
+								? '' + value
+								: value;
+				if( typeof value !== 'string' )
+				{
+					if( typeof JSON === 'object' && JSON !== null && typeof JSON.stringify === 'function' )
+					{
+						value = JSON.stringify( value );
+					}
+					else
+					{
+						throw new Error( 'cookies.set() received value which could not be serialized.' );
+					}
 				}
 			}
 
