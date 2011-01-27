@@ -306,6 +306,7 @@
 				options = {};
 			}
 
+			// TODO: consider value serialization method to parallel parse cookies
 			if( typeof value === 'undefined' || value === null ) {
 				value = '';
 				options.hoursToLive = -8760;
