@@ -5,7 +5,7 @@
  * Licensed under the BSD, MIT, and GPL (your choice!) Licenses:
  *  http://code.google.com/p/cookies/wiki/License
  *
- * Last eror free JSLint: 20101109 19:54
+ * Last eror free JSLint: 20110127 11:30
  *                        Checked Options: Assume a browser,
  *                                         Allow one var statement per function
  *                                         Disallow undefined variables
@@ -13,7 +13,6 @@
  *                                         Disallow == and !=
  *                                         Disallow ++ and --
  *                                         Disallow bitwise operators
- *                                         Disallow insecure . and [^...] in /RegExp/
  *                                         Require Initial Caps for constructors
  *                                         Require parens around immediate invocations
  *                        Predefined: window
