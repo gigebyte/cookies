@@ -5,19 +5,21 @@
  * Licensed under the BSD, MIT, and GPL (your choice!) Licenses:
  *  http://code.google.com/p/cookies/wiki/License
  *
- * Last eror free JSLint: 20110127 11:30
- *                        Checked Options: Assume a browser,
- *                                         Allow one var statement per function
+ * Last eror free JSLint: 20110207 12:28
+ *                        Checked Options: Allow one var statement per function
  *                                         Disallow undefined variables
+ *                                         Require Initial Caps for constructors
  *                                         Disallow dangling _ in identifiers
- *                                         Disallow == and !=
  *                                         Disallow ++ and --
  *                                         Disallow bitwise operators
- *                                         Require Initial Caps for constructors
- *                                         Require parens around immediate invocations
+ *                                         Require "use strict";
+ *                                         Assume a browser
+ *                        Indentation: 0
  *                        Predefined: window
  */
-( function( global ) {
+/*jslint onevar: true, undef: true, newcap: true, nomen: true, plusplus: true, bitwise: true, browser: true, strict: true, maxerr: 50, indent: 0 */
+( function( global )
+{
 	"use strict";
 
 	var document, jaaulde;
@@ -33,7 +35,8 @@
 	jaaulde = global.jaaulde = ( global.jaaulde || {} );
 	jaaulde.utils = jaaulde.utils || {};
 
-	jaaulde.utils.cookies = ( function() {
+	jaaulde.utils.cookies = ( function()
+	{
 			/* Private vars */
 		var defaultOptions,
 			/* Private functions */
@@ -54,12 +57,16 @@
 		* @parameter Object options - optional options to start with
 		* @return Object complete and valid options object
 		*/
-		resolveOptions = function( options ) {
+		resolveOptions = function( options )
+		{
 			var returnValue, expireDate;
 
-			if( typeof options !== 'object' || options === null ) {
+			if( typeof options !== 'object' || options === null )
+			{
 				returnValue = defaultOptions;
-			} else {
+			}
+			else
+			{
 				returnValue = {
 					expiresAt: defaultOptions.expiresAt,
 					path: defaultOptions.path,
@@ -67,23 +74,29 @@
 					secure: defaultOptions.secure
 				};
 
-				if( typeof options.expiresAt === 'object' && options.expiresAt instanceof Date ) {
+				if( typeof options.expiresAt === 'object' && options.expiresAt instanceof Date )
+				{
 					returnValue.expiresAt = options.expiresAt;
-				} else if( typeof options.hoursToLive === 'number' && options.hoursToLive !== 0 ) {
+				}
+				else if( typeof options.hoursToLive === 'number' && options.hoursToLive !== 0 )
+				{
 					expireDate = new global.Date();
 					expireDate.setTime( expireDate.getTime() + ( options.hoursToLive * 60 * 60 * 1000 ) );
 					returnValue.expiresAt = expireDate;
 				}
 
-				if( typeof options.path === 'string' && options.path !== '' ) {
+				if( typeof options.path === 'string' && options.path !== '' )
+				{
 					returnValue.path = options.path;
 				}
 
-				if( typeof options.domain === 'string' && options.domain !== '' ) {
+				if( typeof options.domain === 'string' && options.domain !== '' )
+				{
 					returnValue.domain = options.domain;
 				}
 
-				if( options.secure === true ) {
+				if( options.secure === true )
+				{
 					returnValue.secure = options.secure;
 				}
 			}
@@ -98,7 +111,8 @@
 		* @parameter options OBJECT - optional options to start with
 		* @return STRING - complete and valid cookie setting options
 		*/
-		assembleOptionsString = function( options ) {
+		assembleOptionsString = function( options )
+		{
 			options = resolveOptions( options );
 
 			return (
@@ -117,17 +131,20 @@
 		* @parameter data STRING
 		* @return STRING
 		*/
-		trim = global.String.prototype.trim ?
-			function( data ) {
+		trim = global.String.prototype.trim
+			? function( data )
+			{
 				return global.String.prototype.trim.call( data );
-			}:
-			( function() {
+			}
+			: ( function()
+			{
 				var trimLeft, trimRight;
 
 				trimLeft = /^\s+/;
 				trimRight = /\s+$/;
 
-				return function( data ) {
+				return function( data )
+				{
 					return data.replace( trimLeft, '' ).replace( trimRight, '' );
 				};
 			}() );
@@ -140,9 +157,11 @@
 		* @parameter obj MIXED
 		* @return BOOL
 		*/
-		isNaN = ( function() {
+		isNaN = ( function()
+		{
 			var rdigit = /\d/, isNaN = global.isNaN;
-			return function( obj ) {
+			return function( obj )
+			{
 				return ( obj === null || ! rdigit.test( obj ) || isNaN( obj ) );
 			};
 		}() );
@@ -153,11 +172,13 @@
 		* @static
 		* @return OBJECT - hash of cookies from document.cookie
 		*/
-		parseCookies = ( function() {
+		parseCookies = ( function()
+		{
 			var parseJSON, rbrace;
 			
 			parseJSON = global.JSON && global.JSON.parse
-				? ( function() {
+				? ( function()
+				{
 					var rvalidchars, rvalidescape, rvalidtokens, rvalidbraces;
 
 					rvalidchars = /^[\],:{}\s]*$/;
@@ -165,24 +186,30 @@
 					rvalidtokens = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
 					rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g;
 
-					return function( data ) {
+					return function( data )
+					{
 						var returnValue, validJSON;
 
 						returnValue = null;
 
-						if( typeof data === 'string' && data !== '' ) {
+						if( typeof data === 'string' && data !== '' )
+						{
 							// Make sure leading/trailing whitespace is removed (IE can't handle it)
 							data = trim( data );
 
-							if( data !== '' ) {
-								try {
+							if( data !== '' )
+							{
+								try
+								{
 									// Make sure the incoming data is actual JSON. Logic borrowed from http://json.org/json2.js
 									validJSON = rvalidchars.test( data.replace( rvalidescape, '@' ).replace( rvalidtokens, ']' ).replace( rvalidbraces, '' ) );
 
 									returnValue = validJSON ?
 										global.JSON.parse( data ) :
 										null;
-								} catch( e1 ) {
+								}
+								catch( e1 )
+								{
 									returnValue = null;
 								}
 							}
@@ -191,32 +218,39 @@
 						return returnValue;
 					};
 				}() )
-				: function() {
+				: function()
+				{
 					return null;
 				};
 
 			rbrace = /^(?:\{.*\}|\[.*\])$/;
 
-			return function() {
+			return function()
+			{
 				var cookies, splitOnSemiColons, i, splitOnEquals, name, rawValue, value;
 
 				cookies = {};
 				splitOnSemiColons = document.cookie.split( ';' );
 
-				for( i = 0; i < splitOnSemiColons.length; i = i + 1 ) {
+				for( i = 0; i < splitOnSemiColons.length; i = i + 1 )
+				{
 					splitOnEquals = splitOnSemiColons[i].split( '=' );
 
 					name = trim( splitOnEquals.shift() );
 					rawValue = splitOnEquals.join( '=' );
 
-					try {
+					try
+					{
 						value = decodeURIComponent( rawValue );
-					} catch( e2 ) {
+					}
+					catch( e2 )
+					{
 						value = rawValue;
 					}
 
 					//Logic borrowed from http://jquery.com/ dataAttr method
-					try {
+					try
+					{
 						value = value === 'true'
 							? true
 							: value === 'false'
@@ -226,9 +260,8 @@
 									: rbrace.test( value )
 										? parseJSON( value )
 										: value;
-					} catch( e3 ) {
-						value = value;
 					}
+					catch( e3 ) {}
 
 					cookies[name] = value;
 				}
@@ -245,23 +278,33 @@
 		 * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
 		 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
 		 */
-		Constructor.prototype.get = function( cookieName ) {
+		Constructor.prototype.get = function( cookieName )
+		{
 			var returnValue, item, cookies;
 
 			cookies = parseCookies();
 
-			if( typeof cookieName === 'string' ) {
+			if( typeof cookieName === 'string' )
+			{
 				returnValue = ( typeof cookies[cookieName] !== 'undefined' ) ? cookies[cookieName] : null;
-			} else if( typeof cookieName === 'object' && cookieName !== null ) {
+			}
+			else if( typeof cookieName === 'object' && cookieName !== null )
+			{
 				returnValue = {};
-				for( item in cookieName ) {
-					if( typeof cookies[cookieName[item]] !== 'undefined' ) {
+				for( item in cookieName )
+				{
+					if( typeof cookies[cookieName[item]] !== 'undefined' )
+					{
 						returnValue[cookieName[item]] = cookies[cookieName[item]];
-					} else {
+					}
+					else
+					{
 						returnValue[cookieName[item]] = null;
 					}
 				}
-			} else {
+			}
+			else
+			{
 				returnValue = cookies;
 			}
 
@@ -274,18 +317,22 @@
 		 * @paramater Object RegExp - The regular expression to match against cookie names
 		 * @return Mixed - Object:hash of cookies whose names match the RegExp
 		 */
-		Constructor.prototype.filter = function( cookieNameRegExp ) {
+		Constructor.prototype.filter = function( cookieNameRegExp )
+		{
 			var cookieName, returnValue, cookies;
 
 			returnValue = {};
 			cookies = parseCookies();
 
-			if( typeof cookieNameRegExp === 'string' ) {
+			if( typeof cookieNameRegExp === 'string' )
+			{
 				cookieNameRegExp = new RegExp( cookieNameRegExp );
 			}
 
-			for( cookieName in cookies ) {
-				if( cookieName.match( cookieNameRegExp ) ) {
+			for( cookieName in cookies )
+			{
+				if( cookieName.match( cookieNameRegExp ) )
+				{
 					returnValue[cookieName] = cookies[cookieName];
 				}
 			}
@@ -301,13 +348,16 @@
 		 * @paramater Object options - optional list of cookie options to specify
 		 * @return void
 		 */
-		Constructor.prototype.set = function( cookieName, value, options ) {
-			if( typeof options !== 'object' || options === null ) {
+		Constructor.prototype.set = function( cookieName, value, options )
+		{
+			if( typeof options !== 'object' || options === null )
+			{
 				options = {};
 			}
 
 			// TODO: consider value serialization method to parallel parse cookies
-			if( typeof value === 'undefined' || value === null ) {
+			if( typeof value === 'undefined' || value === null )
+			{
 				value = '';
 				options.hoursToLive = -8760;
 			}
@@ -346,23 +396,30 @@
 		 * @paramater Object options - optional list of cookie options to specify ( path, domain )
 		 * @return void
 		 */
-		Constructor.prototype.del = function( cookieName, options ) {
+		Constructor.prototype.del = function( cookieName, options )
+		{
 			var allCookies, name;
 
 			allCookies = {};
 
-			if( typeof options !== 'object' || options === null ) {
+			if( typeof options !== 'object' || options === null )
+			{
 				options = {};
 			}
 
-			if( typeof cookieName === 'boolean' && cookieName === true ) {
+			if( typeof cookieName === 'boolean' && cookieName === true )
+			{
 				allCookies = this.get();
-			} else if( typeof cookieName === 'string' ) {
+			}
+			else if( typeof cookieName === 'string' )
+			{
 				allCookies[cookieName] = true;
 			}
 
-			for( name in allCookies ) {
-				if( typeof name === 'string' && name !== '' ) {
+			for( name in allCookies )
+			{
+				if( typeof name === 'string' && name !== '' )
+				{
 					this.set( name, null, options );
 				}
 			}
@@ -373,7 +430,8 @@
 		 * @access public
 		 * @return Boolean
 		 */
-		Constructor.prototype.test = function() {
+		Constructor.prototype.test = function()
+		{
 			var returnValue, testName, testValue;
 
 			testName = 'cookiesCT';
@@ -381,7 +439,8 @@
 
 			this.set( testName, testValue );
 
-			if( this.get( testName ) === testValue ) {
+			if( this.get( testName ) === testValue )
+			{
 				this.del( testName );
 				returnValue = true;
 			}
@@ -395,8 +454,10 @@
 		 * @param Object options - list of cookie options to specify
 		 * @return void
 		 */
-		Constructor.prototype.setOptions = function( options ) {
-			if( typeof options !== 'object' ) {
+		Constructor.prototype.setOptions = function( options )
+		{
+			if( typeof options !== 'object' )
+			{
 				options = null;
 			}
 
@@ -406,8 +467,10 @@
 		return new Constructor();
 	}() );
 
-	if( global.jQuery ) {
-		( function( $ ) {
+	if( global.jQuery )
+	{
+		( function( $ )
+		{
 			$.cookies = jaaulde.utils.cookies;
 
 			var extensions = {
@@ -419,34 +482,44 @@
 				* @param options OBJECT - list of cookie options to specify
 				* @return jQuery
 				*/
-				cookify: function( options ) {
+				cookify: function( options )
+				{
 					var nameTokenAttrs, getN, resetNameTokenAttrs, n;
 
-					resetNameTokenAttrs = function() {
+					resetNameTokenAttrs = function()
+					{
 						nameTokenAttrs = ['name', 'id'];
 					};
 
-					getN = function() {
+					getN = function()
+					{
 						n = nameTokenAttrs.shift();
 						return !! n;
 					};
 
 					//Get rid of :radios for this run through--they are special
-					this.not( ':radio' ).each( function() {
+					this.not( ':radio' ).each( function()
+					{
 						var $this, nameToken, value;
 
 						$this = $( this );
 						
 						resetNameTokenAttrs();
 
-						while( getN() ) {
+						while( getN() )
+						{
 							nameToken = $this.attr( n );
-							if( typeof nameToken === 'string' && nameToken !== '' ) {
-								if( $this.is( ':input' ) ) {
-									if( ! $this.is( ':checkbox' ) || $this.is( ':checked' ) ) {
+							if( typeof nameToken === 'string' && nameToken !== '' )
+							{
+								if( $this.is( ':input' ) )
+								{
+									if( ! $this.is( ':checkbox' ) || $this.is( ':checked' ) )
+									{
 										value = $this.val();
 									}
-								} else {
+								}
+								else
+								{
 									value = $this.html();
 								}
 
@@ -461,7 +534,8 @@
 						}
 					} );
 					//Now we can deal with radios...
-					this.filter( ':radio' ).each( function() {
+					this.filter( ':radio' ).each( function()
+					{
 						//but I'm not sure what to do with these yet...
 						/*
 						var $this, nameToken, value;
@@ -469,9 +543,11 @@
 
 						resetNameTokenAttrs();
 
-						while( getN() ) {
+						while( getN() )
+						{
 							nameToken = $this.attr( n );
-							if( typeof nameToken === 'string' && nameToken !== '' ) {
+							if( typeof nameToken === 'string' && nameToken !== '' )
+							{
 							}
 						}
 						*/
@@ -485,40 +561,55 @@
 				* @access public
 				* @return jQuery
 				*/
-				cookieFill: function() {
+				cookieFill: function()
+				{
 					var nameTokenAttrs, getN, resetNameTokenAttrs, n;
 
-					resetNameTokenAttrs = function() {
+					resetNameTokenAttrs = function()
+					{
 						nameTokenAttrs = ['name', 'id'];
 					};
 
-					getN = function() {
+					getN = function()
+					{
 						n = nameTokenAttrs.shift();
 						return !! n;
 					};
 
 					//Get rid of :radios for this run through--they are special
-					this.not( ':radio' ).each( function() {
+					this.not( ':radio' ).each( function()
+					{
 						var $this, nameToken, value;
 
 						$this = $( this );
 						
 						resetNameTokenAttrs();
 
-						while( getN() ) {
+						while( getN() )
+						{
 							nameToken = $this.attr( n );
-							if( typeof nameToken === 'string' && nameToken !== '' ) {
+							if( typeof nameToken === 'string' && nameToken !== '' )
+							{
 								value = $.cookies.get( nameToken );
-								if( value !== null ) {
-									if( $this.is( ':checkbox' ) ) {
-										if( $this.val() === value ) {
+								if( value !== null )
+								{
+									if( $this.is( ':checkbox' ) )
+									{
+										if( $this.val() === value )
+										{
 											$this.attr( 'checked', true );
-										} else {
+										}
+										else
+										{
 											$this.removeAttr( 'checked' );
 										}
-									} else if( $this.is( ':input' ) ) {
+									}
+									else if( $this.is( ':input' ) )
+									{
 										$this.val( value );
-									} else {
+									}
+									else
+									{
 										$this.html( value );
 									}
 								}
@@ -528,7 +619,8 @@
 						}
 					} );
 					//Now we can deal with radios...
-					this.filter( ':radio' ).each( function() {
+					this.filter( ':radio' ).each( function()
+					{
 						//but I'm not sure what to do with these yet...
 					} );
 
@@ -541,17 +633,21 @@
 				* @param options OBJECT - list of cookie options to specify
 				* @return jQuery
 				*/
-				cookieBind: function( options ) {
-					return this.each( function() {
+				cookieBind: function( options )
+				{
+					return this.each( function()
+					{
 						var $this = $( this );
-						$this.cookieFill().change( function() {
+						$this.cookieFill().change( function()
+						{
 							$this.cookify( options );
 						} );
 					} );
 				}
 			};
 
-			$.each( extensions, function( i ) {
+			$.each( extensions, function( i )
+			{
 				$.fn[i] = this;
 			} );
 
