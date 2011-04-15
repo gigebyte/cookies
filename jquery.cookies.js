@@ -471,6 +471,17 @@
 	{
 		( function( $ )
 		{
+		  var NameTokenAttrResolver = function()
+		  {
+		    var NameTokenAttrs = ['name', 'id'];
+		    this.current = null;
+		    this.nextAttrName = function()
+		    {
+		      this.current = NameTokenAttrs.shift();
+		      return !! this.current;
+		    }
+		  };
+
 			$.cookies = jaaulde.utils.cookies;
 
 			var extensions = {
@@ -484,75 +495,74 @@
 				*/
 				cookify: function( options )
 				{
-					var nameTokenAttrs, getN, resetNameTokenAttrs, n;
+          this
+            .not( ':input' )
+              .each( function()
+              {
+                var $this, NTAR, nameToken, value;
 
-					resetNameTokenAttrs = function()
-					{
-						nameTokenAttrs = ['name', 'id'];
-					};
+    						$this = $( this );
 
-					getN = function()
-					{
-						n = nameTokenAttrs.shift();
-						return !! n;
-					};
+    						NTAR = new NameTokenAttrResolver();
 
-					//Get rid of :radios for this run through--they are special
-					this.not( ':radio' ).each( function()
-					{
-						var $this, nameToken, value;
+    						while( NTAR.nextAttrName() )
+    						{
+    						  nameToken = $this.attr( NTAR.current );
+    							if( typeof nameToken === 'string' && nameToken !== '' )
+    							{
+    								value = $this.html();
 
-						$this = $( this );
-						
-						resetNameTokenAttrs();
+    								$.cookies.set(
+    								  nameToken,
+    								  ( typeof value === 'string' && value !== '' ) ? value : null,
+    								  options
+    								);
 
-						while( getN() )
-						{
-							nameToken = $this.attr( n );
-							if( typeof nameToken === 'string' && nameToken !== '' )
-							{
-								if( $this.is( ':input' ) )
-								{
-									if( ! $this.is( ':checkbox' ) || $this.is( ':checked' ) )
-									{
-										value = $this.val();
-									}
-								}
-								else
-								{
-									value = $this.html();
-								}
+    								break;
+    							}
+    						}
+              } )
+              .end()
+            .filter( ':input')
+              .filter( ':radio' )
+                .each( function()
+                {
 
-								value = ( typeof value === 'string' && value !== '' )
-									? value
-									: null;
+                } )
+                .end()
+              .filter( ':checkbox' )
+                .each( function()
+                {
 
-								$.cookies.set( nameToken, value, options );
+                } )
+                .end()
+              .not( ':radio, :checkbox' )
+                .each( function()
+                {
+                  var $this, NTAR, nameToken, value;
 
-								break;
-							}
-						}
-					} );
-					//Now we can deal with radios...
-					this.filter( ':radio' ).each( function()
-					{
-						//but I'm not sure what to do with these yet...
-						/*
-						var $this, nameToken, value;
-						$this = $( this );
+      						$this = $( this );
 
-						resetNameTokenAttrs();
+      						NTAR = new NameTokenAttrResolver();
 
-						while( getN() )
-						{
-							nameToken = $this.attr( n );
-							if( typeof nameToken === 'string' && nameToken !== '' )
-							{
-							}
-						}
-						*/
-					} );
-						
+      						while( NTAR.nextAttrName() )
+      						{
+      							nameToken = $this.attr( NTAR.current );
+      							if( typeof nameToken === 'string' && nameToken !== '' )
+      							{
+      								value = $this.val();
+
+      								$.cookies.set(
+      								  nameToken,
+      								  ( typeof value === 'string' && value !== '' ) ? value : null,
+      								  options
+      								);
+
+      								break;
+      							}
+      						}
+                } );
+	
 					return this;
 				},
 				/**
@@ -563,66 +573,69 @@
 				*/
 				cookieFill: function()
 				{
-					var nameTokenAttrs, getN, resetNameTokenAttrs, n;
+          this
+            .not( ':input' )
+              .each( function()
+              {
+                var $this, NTAR, nameToken, value;
 
-					resetNameTokenAttrs = function()
-					{
-						nameTokenAttrs = ['name', 'id'];
-					};
+    						$this = $( this );
 
-					getN = function()
-					{
-						n = nameTokenAttrs.shift();
-						return !! n;
-					};
+    						NTAR = new NameTokenAttrResolver();
 
-					//Get rid of :radios for this run through--they are special
-					this.not( ':radio' ).each( function()
-					{
-						var $this, nameToken, value;
+    						while( NTAR.nextAttrName() )
+    						{
+    							nameToken = $this.attr( NTAR.current );
+    							if( typeof nameToken === 'string' && nameToken !== '' )
+    							{
+    								value = $.cookies.get( nameToken );
+    								if( value !== null )
+    								{
+    										$this.html( value );
+    								}
 
-						$this = $( this );
-						
-						resetNameTokenAttrs();
+    								break;
+    							}
+    						}
+              } )
+              .end()
+            .filter( ':input')
+              .filter( ':radio' )
+                .each( function()
+                {
+                  
+                } )
+                .end()
+              .filter( ':checkbox' )
+                .each( function()
+                {
+                  
+                } )
+                .end()
+              .not( ':radio, :checkbox' )
+                .each( function()
+                {
+                  var $this, NTAR, nameToken, value;
 
-						while( getN() )
-						{
-							nameToken = $this.attr( n );
-							if( typeof nameToken === 'string' && nameToken !== '' )
-							{
-								value = $.cookies.get( nameToken );
-								if( value !== null )
-								{
-									if( $this.is( ':checkbox' ) )
-									{
-										if( $this.val() === value )
-										{
-											$this.attr( 'checked', true );
-										}
-										else
-										{
-											$this.removeAttr( 'checked' );
-										}
-									}
-									else if( $this.is( ':input' ) )
-									{
-										$this.val( value );
-									}
-									else
-									{
-										$this.html( value );
-									}
-								}
+      						$this = $( this );
 
-								break;
-							}
-						}
-					} );
-					//Now we can deal with radios...
-					this.filter( ':radio' ).each( function()
-					{
-						//but I'm not sure what to do with these yet...
-					} );
+      						NTAR = new NameTokenAttrResolver();
+
+      						while( NTAR.nextAttrName() )
+      						{
+      							nameToken = $this.attr( NTAR.current );
+      							if( typeof nameToken === 'string' && nameToken !== '' )
+      							{
+      								value = $.cookies.get( nameToken );
+      								if( value !== null )
+      								{
+      										$this.val( value );
+      								}
+
+      								break;
+      							}
+      						}
+                } );
 
 					return this;
 				},
