@@ -482,7 +482,7 @@
 		    }
 		  };
 
-			$.cookies = jaaulde.utils.cookies;
+			var cookies = $.cookies = jaaulde.utils.cookies;
 
 			var extensions = {
 				/**
@@ -497,6 +497,9 @@
 				{
           this
             .not( ':input' )
+              /*
+                Iterate non input elements
+               */
               .each( function()
               {
                 var $this, NTAR, nameToken, value;
@@ -512,7 +515,7 @@
     							{
     								value = $this.html();
 
-    								$.cookies.set(
+    								cookies.set(
     								  nameToken,
     								  ( typeof value === 'string' && value !== '' ) ? value : null,
     								  options
@@ -525,18 +528,27 @@
               .end()
             .filter( ':input')
               .filter( ':radio' )
+                /*
+                  Iterate radio inputs
+                 */
                 .each( function()
                 {
 
                 } )
                 .end()
               .filter( ':checkbox' )
+                /*
+                  Iterate checkbox inputs
+                 */
                 .each( function()
                 {
 
                 } )
                 .end()
               .not( ':radio, :checkbox' )
+                /*
+                  Iterate all other inputs
+                 */
                 .each( function()
                 {
                   var $this, NTAR, nameToken, value;
@@ -552,7 +564,7 @@
       							{
       								value = $this.val();
 
-      								$.cookies.set(
+      								cookies.set(
       								  nameToken,
       								  ( typeof value === 'string' && value !== '' ) ? value : null,
       								  options
@@ -575,6 +587,9 @@
 				{
           this
             .not( ':input' )
+              /*
+                Iterate non input elements
+               */
               .each( function()
               {
                 var $this, NTAR, nameToken, value;
@@ -588,7 +603,7 @@
     							nameToken = $this.attr( NTAR.current );
     							if( typeof nameToken === 'string' && nameToken !== '' )
     							{
-    								value = $.cookies.get( nameToken );
+    								value = cookies.get( nameToken );
     								if( value !== null )
     								{
     										$this.html( value );
@@ -601,18 +616,27 @@
               .end()
             .filter( ':input')
               .filter( ':radio' )
+                /*
+                  Iterate radio inputs
+                 */
                 .each( function()
                 {
-                  
+
                 } )
                 .end()
               .filter( ':checkbox' )
+                /*
+                  Iterate checkbox inputs
+                 */
                 .each( function()
                 {
                   
                 } )
                 .end()
               .not( ':radio, :checkbox' )
+                /*
+                  Iterate all other inputs
+                 */
                 .each( function()
                 {
                   var $this, NTAR, nameToken, value;
@@ -626,7 +650,7 @@
       							nameToken = $this.attr( NTAR.current );
       							if( typeof nameToken === 'string' && nameToken !== '' )
       							{
-      								value = $.cookies.get( nameToken );
+      								value = cookies.get( nameToken );
       								if( value !== null )
       								{
       										$this.val( value );
