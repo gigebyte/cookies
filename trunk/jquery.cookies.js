@@ -3,31 +3,31 @@
  * All rights reserved.
  *
  * Licensed under the BSD, MIT, and GPL (your choice!) Licenses:
- *  http://code.google.com/p/cookies/wiki/License
+ *	@link http://code.google.com/p/cookies/wiki/License
  *
- * Last eror free JSLint: 20110207 12:28
- *                        Checked Options: Allow one var statement per function
- *                                         Disallow undefined variables
- *                                         Require Initial Caps for constructors
- *                                         Disallow dangling _ in identifiers
- *                                         Disallow ++ and --
- *                                         Disallow bitwise operators
- *                                         Require "use strict";
- *                                         Assume a browser
- *                        Indentation: 0
- *                        Predefined: window
+ *  Last eror free JSHint: 20110418 12:14
+ *		@link http://jshint.com/
+ *			Checked Options:
+ *				Disallow bitwise operators
+ *				Require curly braces around all blocks
+ *				Require ===
+ *				Require for..in statements to be filtered
+ *				Require variables to be declared before usage
+ *				Environment
+ *					Browser
+ *					jQuery
  */
-/*jslint onevar: true, undef: true, newcap: true, nomen: true, plusplus: true, bitwise: true, browser: true, strict: true, maxerr: 50, indent: 0 */
 ( function( global )
 {
 	"use strict";
 
-	var document, jaaulde;
+	var document, Object, jaaulde;
 
 	/*
 	 * localize global variables which are used more than once
 	 */
 	document = global.document;
+	Object = global.Object;
 
 	/*
 	 * jaaulde Namespace preparation - the only var introduced into global space
@@ -45,7 +45,7 @@
 		defaultOptions = {
 			expiresAt: null,
 			path: '/',
-			domain:  null,
+			domain: null,
 			secure: false
 		};
 
@@ -131,12 +131,12 @@
 		* @parameter data STRING
 		* @return STRING
 		*/
-		trim = global.String.prototype.trim
-			? function( data )
+		trim = global.String.prototype.trim ?
+			function( data )
 			{
 				return global.String.prototype.trim.call( data );
-			}
-			: ( function()
+			} :
+			( function()
 			{
 				var trimLeft, trimRight;
 
@@ -176,8 +176,8 @@
 		{
 			var parseJSON, rbrace;
 			
-			parseJSON = global.JSON && global.JSON.parse
-				? ( function()
+			parseJSON = global.JSON && global.JSON.parse ?
+				( function()
 				{
 					var rvalidchars, rvalidescape, rvalidtokens, rvalidbraces;
 
@@ -217,8 +217,8 @@
 
 						return returnValue;
 					};
-				}() )
-				: function()
+				}() ) :
+				function()
 				{
 					return null;
 				};
@@ -234,36 +234,39 @@
 
 				for( i = 0; i < splitOnSemiColons.length; i = i + 1 )
 				{
-					splitOnEquals = splitOnSemiColons[i].split( '=' );
-
-					name = trim( splitOnEquals.shift() );
-					rawValue = splitOnEquals.join( '=' );
-
-					try
+					if( Object.prototype.hasOwnProperty.call( splitOnSemiColons, i ) )
 					{
-						value = decodeURIComponent( rawValue );
-					}
-					catch( e2 )
-					{
-						value = rawValue;
-					}
+						splitOnEquals = splitOnSemiColons[i].split( '=' );
 
-					//Logic borrowed from http://jquery.com/ dataAttr method
-					try
-					{
-						value = value === 'true'
-							? true
-							: value === 'false'
-								? false
-								: ! isNaN( value )
-									? parseFloat( value )
-									: rbrace.test( value )
-										? parseJSON( value )
-										: value;
-					}
-					catch( e3 ) {}
+						name = trim( splitOnEquals.shift() );
+						rawValue = splitOnEquals.join( '=' );
 
-					cookies[name] = value;
+						try
+						{
+							value = decodeURIComponent( rawValue );
+						}
+						catch( e2 )
+						{
+							value = rawValue;
+						}
+
+						//Logic borrowed from http://jquery.com/ dataAttr method
+						try
+						{
+							value = value === 'true' ?
+								true :
+								value === 'false' ?
+									false :
+									! isNaN( value ) ?
+										parseFloat( value ) :
+										rbrace.test( value ) ?
+											parseJSON( value ) :
+											value;
+						}
+						catch( e3 ) {}
+
+						cookies[name] = value;
+					}
 				}
 				return cookies;
 			};
@@ -293,13 +296,16 @@
 				returnValue = {};
 				for( item in cookieName )
 				{
-					if( typeof cookies[cookieName[item]] !== 'undefined' )
+					if( Object.prototype.hasOwnProperty.call( cookieName, item ) )
 					{
-						returnValue[cookieName[item]] = cookies[cookieName[item]];
-					}
-					else
-					{
-						returnValue[cookieName[item]] = null;
+						if( typeof cookies[cookieName[item]] !== 'undefined' )
+						{
+							returnValue[cookieName[item]] = cookies[cookieName[item]];
+						}
+						else
+						{
+							returnValue[cookieName[item]] = null;
+						}
 					}
 				}
 			}
@@ -331,7 +337,7 @@
 
 			for( cookieName in cookies )
 			{
-				if( cookieName.match( cookieNameRegExp ) )
+				if( Object.prototype.hasOwnProperty.call( cookies, cookieName ) && cookieName.match( cookieNameRegExp ) )
 				{
 					returnValue[cookieName] = cookies[cookieName];
 				}
@@ -364,13 +370,13 @@
 			else
 			{
 				//Logic borrowed from http://jquery.com/ dataAttr method and reversed
-				value = value === true
-						? 'true'
-						: value === false
-							? 'false'
-							: ! isNaN( value )
-								? '' + value
-								: value;
+				value = value === true ?
+						'true' :
+						value === false ?
+							'false' :
+							! isNaN( value ) ?
+								'' + value :
+								value;
 				if( typeof value !== 'string' )
 				{
 					if( typeof JSON === 'object' && JSON !== null && typeof JSON.stringify === 'function' )
@@ -418,7 +424,7 @@
 
 			for( name in allCookies )
 			{
-				if( typeof name === 'string' && name !== '' )
+				if( Object.prototype.hasOwnProperty.call( allCookies, name ) && typeof name === 'string' && name !== '' )
 				{
 					this.set( name, null, options );
 				}
@@ -471,20 +477,22 @@
 	{
 		( function( $ )
 		{
-		  var NameTokenAttrResolver = function()
-		  {
-		    var nameTokenAttrs = ['name', 'id'];
-		    this.current = null;
-		    this.nextAttrName = function()
-		    {
-		      this.current = nameTokenAttrs.shift();
-		      return !! this.current;
-		    }
-		  };
+			var NameTokenAttrResolver, cookies, extensions;
 
-			var cookies = $.cookies = jaaulde.utils.cookies;
+			NameTokenAttrResolver = function()
+			{
+				var nameTokenAttrs = ['name', 'id'];
+				this.current = null;
+				this.nextAttrName = function()
+				{
+					this.current = nameTokenAttrs.shift();
+					return !! this.current;
+				};
+			};
 
-			var extensions = {
+			cookies = $.cookies = jaaulde.utils.cookies;
+
+			extensions = {
 				/**
 				* $( 'selector' ).cookify - set the value of an input field, or the innerHTML of an element, to a cookie by the name or id of the field or element
 				*                           (field or element MUST have name or id attribute)
