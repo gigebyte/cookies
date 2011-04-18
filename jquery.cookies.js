@@ -473,11 +473,11 @@
 		{
 		  var NameTokenAttrResolver = function()
 		  {
-		    var NameTokenAttrs = ['name', 'id'];
+		    var nameTokenAttrs = ['name', 'id'];
 		    this.current = null;
 		    this.nextAttrName = function()
 		    {
-		      this.current = NameTokenAttrs.shift();
+		      this.current = nameTokenAttrs.shift();
 		      return !! this.current;
 		    }
 		  };
@@ -495,86 +495,86 @@
 				*/
 				cookify: function( options )
 				{
-          this
-            .not( ':input' )
-              /*
-                Iterate non input elements
-               */
-              .each( function()
-              {
-                var $this, NTAR, nameToken, value;
+					this
+						.not( ':input' )
+							/*
+								Iterate non input elements
+							 */
+							.each( function()
+							{
+								var $this, NTAR, nameToken, value;
 
-    						$this = $( this );
+								$this = $( this );
 
-    						NTAR = new NameTokenAttrResolver();
+								NTAR = new NameTokenAttrResolver();
 
-    						while( NTAR.nextAttrName() )
-    						{
-    						  nameToken = $this.attr( NTAR.current );
-    							if( typeof nameToken === 'string' && nameToken !== '' )
-    							{
-    								value = $this.html();
+								while( NTAR.nextAttrName() )
+								{
+									nameToken = $this.attr( NTAR.current );
+									if( typeof nameToken === 'string' && nameToken !== '' )
+									{
+										value = $this.html();
 
-    								cookies.set(
-    								  nameToken,
-    								  ( typeof value === 'string' && value !== '' ) ? value : null,
-    								  options
-    								);
+										cookies.set(
+											nameToken,
+											( typeof value === 'string' && value !== '' ) ? value : null,
+											options
+										);
 
-    								break;
-    							}
-    						}
-              } )
-              .end()
-            .filter( ':input')
-              .filter( ':radio' )
-                /*
-                  Iterate radio inputs
-                 */
-                .each( function()
-                {
+										break;
+									}
+								}
+							} )
+							.end()
+						.filter( ':input')
+							.filter( ':radio' )
+								/*
+									Iterate radio inputs
+								 */
+								.each( function()
+								{
 
-                } )
-                .end()
-              .filter( ':checkbox' )
-                /*
-                  Iterate checkbox inputs
-                 */
-                .each( function()
-                {
+								} )
+								.end()
+							.filter( ':checkbox' )
+								/*
+									Iterate checkbox inputs
+								 */
+								.each( function()
+								{
 
-                } )
-                .end()
-              .not( ':radio, :checkbox' )
-                /*
-                  Iterate all other inputs
-                 */
-                .each( function()
-                {
-                  var $this, NTAR, nameToken, value;
+								} )
+								.end()
+							.not( ':radio, :checkbox' )
+								/*
+									Iterate all other inputs
+								 */
+								.each( function()
+								{
+									var $this, NTAR, nameToken, value;
 
-      						$this = $( this );
+									$this = $( this );
 
-      						NTAR = new NameTokenAttrResolver();
+									NTAR = new NameTokenAttrResolver();
 
-      						while( NTAR.nextAttrName() )
-      						{
-      							nameToken = $this.attr( NTAR.current );
-      							if( typeof nameToken === 'string' && nameToken !== '' )
-      							{
-      								value = $this.val();
+									while( NTAR.nextAttrName() )
+									{
+										nameToken = $this.attr( NTAR.current );
+										if( typeof nameToken === 'string' && nameToken !== '' )
+										{
+											value = $this.val();
 
-      								cookies.set(
-      								  nameToken,
-      								  ( typeof value === 'string' && value !== '' ) ? value : null,
-      								  options
-      								);
+											cookies.set(
+												nameToken,
+												( typeof value === 'string' && value !== '' ) ? value : null,
+												options
+											);
 
-      								break;
-      							}
-      						}
-                } );
-	
+											break;
+										}
+									}
+								} );
+
 					return this;
 				},
 				/**
@@ -585,81 +585,81 @@
 				*/
 				cookieFill: function()
 				{
-          this
-            .not( ':input' )
-              /*
-                Iterate non input elements
-               */
-              .each( function()
-              {
-                var $this, NTAR, nameToken, value;
+					this
+						.not( ':input' )
+							/*
+								Iterate non input elements
+							 */
+							.each( function()
+							{
+								var $this, NTAR, nameToken, value;
 
-    						$this = $( this );
+								$this = $( this );
 
-    						NTAR = new NameTokenAttrResolver();
+								NTAR = new NameTokenAttrResolver();
 
-    						while( NTAR.nextAttrName() )
-    						{
-    							nameToken = $this.attr( NTAR.current );
-    							if( typeof nameToken === 'string' && nameToken !== '' )
-    							{
-    								value = cookies.get( nameToken );
-    								if( value !== null )
-    								{
-    										$this.html( value );
-    								}
+								while( NTAR.nextAttrName() )
+								{
+									nameToken = $this.attr( NTAR.current );
+									if( typeof nameToken === 'string' && nameToken !== '' )
+									{
+										value = cookies.get( nameToken );
+										if( value !== null )
+										{
+											$this.html( value );
+										}
 
-    								break;
-    							}
-    						}
-              } )
-              .end()
-            .filter( ':input')
-              .filter( ':radio' )
-                /*
-                  Iterate radio inputs
-                 */
-                .each( function()
-                {
+										break;
+									}
+								}
+							} )
+							.end()
+						.filter( ':input')
+							.filter( ':radio' )
+							/*
+								Iterate radio inputs
+							 */
+							.each( function()
+							{
 
-                } )
-                .end()
-              .filter( ':checkbox' )
-                /*
-                  Iterate checkbox inputs
-                 */
-                .each( function()
-                {
-                  
-                } )
-                .end()
-              .not( ':radio, :checkbox' )
-                /*
-                  Iterate all other inputs
-                 */
-                .each( function()
-                {
-                  var $this, NTAR, nameToken, value;
+							} )
+							.end()
+						.filter( ':checkbox' )
+							/*
+								Iterate checkbox inputs
+							 */
+							.each( function()
+							{
 
-      						$this = $( this );
+							} )
+							.end()
+						.not( ':radio, :checkbox' )
+							/*
+								Iterate all other inputs
+							*/
+							.each( function()
+							{
+								var $this, NTAR, nameToken, value;
 
-      						NTAR = new NameTokenAttrResolver();
+								$this = $( this );
 
-      						while( NTAR.nextAttrName() )
-      						{
-      							nameToken = $this.attr( NTAR.current );
-      							if( typeof nameToken === 'string' && nameToken !== '' )
-      							{
-      								value = cookies.get( nameToken );
-      								if( value !== null )
-      								{
-      										$this.val( value );
-      								}
+								NTAR = new NameTokenAttrResolver();
 
-      								break;
-      							}
-      						}
-                } );
+								while( NTAR.nextAttrName() )
+								{
+									nameToken = $this.attr( NTAR.current );
+									if( typeof nameToken === 'string' && nameToken !== '' )
+									{
+										value = cookies.get( nameToken );
+										if( value !== null )
+										{
+											$this.val( value );
+										}
+
+										break;
+									}
+								}
+							} );
 
 					return this;
 				},
