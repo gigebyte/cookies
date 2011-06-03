@@ -227,46 +227,51 @@
 
 			return function()
 			{
-				var cookies, splitOnSemiColons, i, splitOnEquals, name, rawValue, value;
+				var cookies, splitOnSemiColons, cookieCount, i, splitOnEquals, name, rawValue, value;
 
 				cookies = {};
 				splitOnSemiColons = document.cookie.split( ';' );
+        cookieCount = splitOnSemiColons.length;
 
-				for( i = 0; i < splitOnSemiColons.length; i = i + 1 )
+				for( i = 0; i < cookieCount; i = i + 1 )
 				{
-					if( Object.prototype.hasOwnProperty.call( splitOnSemiColons, i ) )
+					splitOnEquals = splitOnSemiColons[i].split( '=' );
+
+					name = trim( splitOnEquals.shift() );
+					if( splitOnEquals.length >= 1 )
 					{
-						splitOnEquals = splitOnSemiColons[i].split( '=' );
+					  rawValue = splitOnEquals.join( '=' );
+				  }
+				  else
+				  {
+            rawValue = '';
+          }
 
-						name = trim( splitOnEquals.shift() );
-						rawValue = splitOnEquals.join( '=' );
-
-						try
-						{
-							value = decodeURIComponent( rawValue );
-						}
-						catch( e2 )
-						{
-							value = rawValue;
-						}
-
-						//Logic borrowed from http://jquery.com/ dataAttr method
-						try
-						{
-							value = value === 'true' ?
-								true :
-								value === 'false' ?
-									false :
-									! isNaN( value ) ?
-										parseFloat( value ) :
-										rbrace.test( value ) ?
-											parseJSON( value ) :
-											value;
-						}
-						catch( e3 ) {}
-
-						cookies[name] = value;
+					try
+					{
+						value = decodeURIComponent( rawValue );
 					}
+					catch( e2 )
+					{
+						value = rawValue;
+					}
+
+					//Logic borrowed from http://jquery.com/ dataAttr method
+					try
+					{
+						value = value === 'true' ?
+							true :
+							value === 'false' ?
+								false :
+								! isNaN( value ) ?
+									parseFloat( value ) :
+									rbrace.test( value ) ?
+										parseJSON( value ) :
+										value;
+					}
+					catch( e3 ) {}
+
+					cookies[name] = value;
 				}
 				return cookies;
 			};
