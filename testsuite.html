@@ -3,7 +3,8 @@
 	<head>
 		<title>Testing Cookies</title>
 		<script type="text/javascript" src="../externals/json/json2.js"></script>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+		<script type="text/javascript" src="jaaulde.cookies.js"></script>
 		<script type="text/javascript" src="jquery.cookies.js"></script>
 	</head>
 	<body>
@@ -356,6 +357,10 @@
 
 					} )( window.fireunit );
 				}
+        else
+        {
+          console.error( 'FireUnit not available.' );
+        }
 			} )();
 		</script>
 	</body>
