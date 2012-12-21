@@ -19,16 +19,17 @@
         /* localize first party support */
         jaaulde = global.jaaulde = (global.jaaulde || {});
 
-    /*
-     * jaaulde.utils Namespace
-     */
+    /* jaaulde.utils Namespace */
     jaaulde.utils = (jaaulde.utils || {});
 
-    /*
-     * The library
-     */
+    /* The library */
     jaaulde.utils.cookies = (function () {
-        var defaultOptions, resolveOptions, assembleOptionsString, isNaN, trim, parseCookies, Constructor;
+        var defaultOptions,
+            resolveOptions,
+            cookieOptions,
+            isNaN,
+            trim,
+            parseCookies;
 
         defaultOptions = {
             expiresAt: null,
@@ -37,102 +38,104 @@
             secure: false
         };
 
-        resolveOptions = function (options) {
-            var returnValue, expireDate;
+        resolveOptions = function (o) {
+            var r,
+                e;
 
-            if (typeof options !== 'object' || options === null) {
-                returnValue = defaultOptions;
+            if (typeof o !== 'object' || o === null) {
+                r = defaultOptions;
             } else {
-                returnValue = {
+                r = {
                     expiresAt: defaultOptions.expiresAt,
                     path: defaultOptions.path,
                     domain: defaultOptions.domain,
                     secure: defaultOptions.secure
                 };
 
-                if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date) {
-                    returnValue.expiresAt = options.expiresAt;
-                } else if (typeof options.hoursToLive === 'number' && options.hoursToLive !== 0) {
-                    expireDate = new global.Date();
-                    expireDate.setTime(expireDate.getTime() + (options.hoursToLive * 60 * 60 * 1000));
-                    returnValue.expiresAt = expireDate;
+                if (typeof o.expiresAt === 'object' && o.expiresAt instanceof Date) {
+                    r.expiresAt = o.expiresAt;
+                } else if (typeof o.hoursToLive === 'number' && o.hoursToLive !== 0) {
+                    e = new global.Date();
+                    e.setTime(e.getTime() + (o.hoursToLive * 60 * 60 * 1000));
+                    r.expiresAt = e;
                 }
 
-                if (typeof options.path === 'string' && options.path !== '') {
-                    returnValue.path = options.path;
+                if (typeof o.path === 'string' && o.path !== '') {
+                    r.path = o.path;
                 }
 
-                if (typeof options.domain === 'string' && options.domain !== '') {
-                    returnValue.domain = options.domain;
+                if (typeof o.domain === 'string' && o.domain !== '') {
+                    r.domain = o.domain;
                 }
 
-                if (options.secure === true) {
-                    returnValue.secure = options.secure;
+                if (o.secure === true) {
+                    r.secure = o.secure;
                 }
             }
 
-            return returnValue;
+            return r;
         };
 
-        assembleOptionsString = function (options) {
-            options = resolveOptions(options);
+        cookieOptions = function (o) {
+            o = resolveOptions(o);
 
             return (
-                (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date ? '; expires=' + options.expiresAt.toGMTString() : '') +
-                '; path=' + options.path +
-                (typeof options.domain === 'string' ? '; domain=' + options.domain : '') +
-                (options.secure === true ? '; secure' : '')
+                (typeof o.expiresAt === 'object' && o.expiresAt instanceof Date ? '; expires=' + o.expiresAt.toGMTString() : '') +
+                '; path=' + o.path +
+                (typeof o.domain === 'string' ? '; domain=' + o.domain : '') +
+                (o.secure === true ? '; secure' : '')
             );
         };
 
-        /**
-         * Some logic for `trim` and `isNaN` borrowed from http://jquery.com/
-         */
+        /* Some logic for `trim` and `isNaN` borrowed from http://jquery.com/ */
         if (global.String.prototype.trim) {
-            trim = function (data) {
-                return global.String.prototype.trim.call(data);
+            trim = function (s) {
+                return global.String.prototype.trim.call(s);
             };
         } else {
             trim = (function () {
-                var trimLeft, trimRight;
+                var l,
+                    r;
 
-                trimLeft = /^\s+/;
-                trimRight = /\s+$/;
+                l = /^\s+/;
+                r = /\s+$/;
 
-                return function (data) {
-                    return data.replace(trimLeft, '').replace(trimRight, '');
+                return function (s) {
+                    return s.replace(l, '').replace(r, '');
                 };
             }());
         }
 
         isNaN = (function () {
-            var rdigit = /\d/, isNaN = global.isNaN;
-            return function (obj) {
-                return (obj === null || !rdigit.test(obj) || isNaN(obj));
+            var p = /\d/,
+                isNaN = global.isNaN;
+
+            return function (v) {
+                return (v === null || !p.test(v) || isNaN(v));
             };
         }());
 
         parseCookies = (function () {
-            var parseJSON, rbrace;
+            var parseJSON,
+                p;
 
             if (JSON && typeof JSON.parse === 'function') {
-                parseJSON = function (data) {
-                    var returnValue = null;
+                parseJSON = function (s) {
+                    var r = null;
 
-                    if (typeof data === 'string' && data !== '') {
-                        // Make sure leading/trailing whitespace is removed (IE can't handle it)
-                        data = trim(data);
+                    if (typeof s === 'string' && s !== '') {
+                        s = trim(s);
 
-                        if (data !== '') {
+                        if (s !== '') {
                             try {
-                                returnValue = JSON.parse(data);
+                                r = JSON.parse(s);
                             } catch (e1) {
-                                returnValue = null;
+                                r = null;
                             }
                         }
                     }
 
-                    return returnValue;
+                    return r;
                 };
             } else {
                 parseJSON = function () {
@@ -140,44 +143,47 @@
                 };
             }
 
-            rbrace = /^(?:\{.*\}|\[.*\])$/;
+            p = /^(?:\{.*\}|\[.*\])$/;
 
             return function () {
-                var cookies, splitOnSemiColons, cookieCount, i, splitOnEquals, name, rawValue, value;
+                var c = {},
+                    s1 = document.cookie.split(';'),
+                    q = s1.length,
+                    i,
+                    s2,
+                    n,
+                    v,
+                    vv;
 
-                cookies = {};
-                splitOnSemiColons = document.cookie.split(';');
-                cookieCount = splitOnSemiColons.length;
+                for (i = 0; i < q; i = i + 1) {
+                    s2 = s1[i].split('=');
 
-                for (i = 0; i < cookieCount; i = i + 1) {
-                    splitOnEquals = splitOnSemiColons[i].split('=');
-
-                    name = trim(splitOnEquals.shift());
-                    if (splitOnEquals.length >= 1) {
-                        rawValue = splitOnEquals.join('=');
+                    n = trim(s2.shift());
+                    if (s2.length >= 1) {
+                        v = s2.join('=');
                     } else {
-                        rawValue = '';
+                        v = '';
                     }
 
                     try {
-                        value = decodeURIComponent(rawValue);
+                        vv = decodeURIComponent(v);
                     } catch (e2) {
-                        value = rawValue;
+                        vv = v;
                     }
 
-                    //Logic borrowed from http://jquery.com/ dataAttr method
+                    /* Logic borrowed from http://jquery.com/ dataAttr method */
                     try {
-                        value = value === 'true'
-                            ? true : value === 'false'
-                                ? false : !isNaN(value)
-                                    ? parseFloat(value) : rbrace.test(value)
-                                        ? parseJSON(value) : value;
+                        vv = (vv === 'true')
+                            ? true : (vv === 'false')
+                                ? false : !isNaN(vv)
+                                    ? parseFloat(vv) : p.test(vv)
+                                        ? parseJSON(vv) : vv;
                     } catch (e3) {}
 
-                    cookies[name] = value;
+                    c[n] = vv;
                 }
 
-                return cookies;
+                return c;
             };
         }());
 
@@ -186,122 +192,118 @@
              * get - get one, several, or all cookies
              *
              * @access public
-             * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
+             * @paramater Mixed n - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
              * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
              */
-            get: function (cookieName) {
-                var returnValue, item, cookies;
+            get: function (n) {
+                var r,
+                    i,
+                    c = parseCookies();
 
-                cookies = parseCookies();
+                if (typeof n === 'string') {
+                    r = (c[n] !== undefined) ? c[n] : null;
+                } else if (typeof n === 'object' && n !== null) {
+                    r = {};
 
-                if (typeof cookieName === 'string') {
-                    returnValue = (cookies[cookieName] !== undefined) ? cookies[cookieName] : null;
-                } else if (typeof cookieName === 'object' && cookieName !== null) {
-                    returnValue = {};
-
-                    for (item in cookieName) {
-                        if (Object.prototype.hasOwnProperty.call(cookieName, item)) {
-                            if (cookies[cookieName[item]] !== undefined) {
-                                returnValue[cookieName[item]] = cookies[cookieName[item]];
+                    for (i in n) {
+                        if (Object.prototype.hasOwnProperty.call(n, i)) {
+                            if (c[n[i]] !== undefined) {
+                                r[n[i]] = c[n[i]];
                             } else {
-                                returnValue[cookieName[item]] = null;
+                                r[n[i]] = null;
                             }
                         }
                     }
                 } else {
-                    returnValue = cookies;
+                    r = c;
                 }
 
-                return returnValue;
+                return r;
             },
             /**
              * filter - get array of cookies whose names match the provided RegExp
              *
              * @access public
-             * @paramater Object RegExp - The regular expression to match against cookie names
+             * @paramater Object RegExp p - The regular expression to match against cookie names
              * @return Mixed - Object:hash of cookies whose names match the RegExp
              */
-            filter: function (cookieNameRegExp) {
-                var cookieName, returnValue, cookies;
+            filter: function (p) {
+                var n,
+                    r = {},
+                    c = parseCookies();
 
-                returnValue = {};
-                cookies = parseCookies();
-
-                if (typeof cookieNameRegExp === 'string') {
-                    cookieNameRegExp = new RegExp(cookieNameRegExp);
+                if (typeof p === 'string') {
+                    p = new RegExp(p);
                 }
 
-                for (cookieName in cookies) {
-                    if (Object.prototype.hasOwnProperty.call(cookies, cookieName) && cookieName.match(cookieNameRegExp)) {
-                        returnValue[cookieName] = cookies[cookieName];
+                for (n in c) {
+                    if (Object.prototype.hasOwnProperty.call(c, n) && n.match(p)) {
+                        r[n] = c[n];
                     }
                 }
 
-                return returnValue;
+                return r;
             },
             /**
              * set - set or delete a cookie with desired options
              *
              * @access public
-             * @paramater String cookieName - name of cookie to set
-             * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded (http://code.google.com/p/cookies/wiki/JSON); NULL to delete
-             * @paramater Object options - optional list of cookie options to specify
+             * @paramater String n - name of cookie to set
+             * @paramater Mixed v - Any JS value. If not a string, will be JSON encoded (http://code.google.com/p/cookies/wiki/JSON); NULL to delete
+             * @paramater Object o - optional list of cookie options to specify
              * @return void
              */
-            set: function (cookieName, value, options) {
-                if (typeof options !== 'object' || options === null) {
-                    options = {};
+            set: function (n, v, o) {
+                if (typeof o !== 'object' || o === null) {
+                    o = {};
                 }
 
-                if (value === undefined || value === null) {
-                    value = '';
-                    options.hoursToLive = -8760;
+                if (v === undefined || v === null) {
+                    v = '';
+                    o.hoursToLive = -8760;
                 } else {
-                    //Logic borrowed from http://jquery.com/ dataAttr method and reversed
-                    value = value === true
-                        ? 'true' : value === false
-                            ? 'false' : !isNaN(value)
-                                ? String(value) : value;
+                    /* Logic borrowed from http://jquery.com/ dataAttr method and reversed */
+                    v = (v === true)
+                        ? 'true' : (v === false)
+                            ? 'false' : !isNaN(v)
+                                ? String(v) : v;
 
-                    if (typeof value !== 'string') {
+                    if (typeof v !== 'string') {
                         if (typeof JSON === 'object' && JSON !== null && typeof JSON.stringify === 'function') {
-                            value = JSON.stringify(value);
+                            v = JSON.stringify(v);
                         } else {
                             throw new Error('cookies.set() received value which could not be serialized.');
                         }
                     }
                 }
 
-                var optionsString = assembleOptionsString(options);
-
-                document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
+                document.cookie = n + '=' + encodeURIComponent(v) + cookieOptions(o);
             },
             /**
              * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
              *
              * @access public
-             * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
-             * @paramater Object options - optional list of cookie options to specify ( path, domain )
+             * @paramater Mixed n - String name of cookie to delete, or Bool true to delete all
+             * @paramater Object o - optional list of cookie options to specify ( path, domain )
              * @return void
              */
-            del: function (cookieName, options) {
-                var allCookies, name;
+            del: function (n, o) {
+                var d = {},
+                    i;
 
-                allCookies = {};
-
-                if (typeof options !== 'object' || options === null) {
-                    options = {};
+                if (typeof o !== 'object' || o === null) {
+                    o = {};
                 }
 
-                if (typeof cookieName === 'boolean' && cookieName === true) {
-                    allCookies = this.get();
-                } else if (typeof cookieName === 'string') {
-                    allCookies[cookieName] = true;
+                if (typeof n === 'boolean' && n === true) {
+                    d = this.get();
+                } else if (typeof n === 'string') {
+                    d[n] = true;
                 }
 
-                for (name in allCookies) {
-                    if (Object.prototype.hasOwnProperty.call(allCookies, name) && typeof name === 'string' && name !== '') {
-                        this.set(name, null, options);
+                for (i in d) {
+                    if (Object.prototype.hasOwnProperty.call(d, i) && typeof i === 'string' && i !== '') {
+                        this.set(i, null, o);
                     }
                 }
             },
@@ -312,33 +314,32 @@
              * @return Boolean
              */
             test: function () {
-                var returnValue, testName, testValue;
+                var r = false,
+                    n = 'cookiesCT',
+                    v = 'data';
 
-                testName = 'cookiesCT';
-                testValue = 'data';
+                this.set(n, v);
 
-                this.set(testName, testValue);
-
-                if (this.get(testName) === testValue) {
-                    this.del(testName);
-                    returnValue = true;
+                if (this.get(n) === v) {
+                    this.del(n);
+                    r = true;
                 }
 
-                return returnValue;
+                return r;
             },
             /**
              * setOptions - set default options for calls to cookie methods
              *
              * @access public
-             * @param Object options - list of cookie options to specify
+             * @param Object o - list of cookie options to specify
              * @return void
              */
-            setOptions: function (options) {
-                if (typeof options !== 'object') {
-                    options = null;
+            setOptions: function (o) {
+                if (typeof o !== 'object') {
+                    o = null;
                 }
 
-                defaultOptions = resolveOptions(options);
+                defaultOptions = resolveOptions(o);
             }
         };
     }());
