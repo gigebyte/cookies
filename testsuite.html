@@ -4,6 +4,7 @@
 		<title>Testing Cookies</title>
 		<script type="text/javascript" src="../externals/json/json2.js"></script>
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+		<!-- script type="text/javascript" src="jquery.cookies.2.2.0.js"></script -->
 		<script type="text/javascript" src="jaaulde.cookies.js"></script>
 		<script type="text/javascript" src="jquery.cookies.js"></script>
 	</head>
@@ -68,300 +69,282 @@
 
 
 		<script type="text/javascript">
-			( function()
-			{
-				if( window.fireunit )
-				{
-					( function( fireunit )
-					{
-					//Testing presence of namespaces
-						fireunit.compare( typeof window.jaaulde, 'object', 'Is window.jaaulde namespace loaded?' );
-						fireunit.compare( typeof window.jaaulde.utils, 'object', 'Is window.jaaulde.utils namespace loaded?' );
-						fireunit.compare( typeof window.jaaulde.utils.cookies, 'object', 'Is window.jaaulde.utils.cookies loaded?' );
-						fireunit.compare( typeof window.jQuery, 'function', 'Is window.jQuery loaded?' );
-						fireunit.compare( typeof window.$, 'function', 'Is window.$ loaded?' );
-						fireunit.compare( window.jQuery, window.$, 'Is window.jQuery aliased as window.$?' );
-					//Check that jQuery extension-ization took place
-						fireunit.compare( typeof $.cookies, 'object', 'Is cookies loaded in under jQuery?' );
-					//Check presence of public methods under own namespace and jQuery
-						fireunit.compare( typeof window.jaaulde.utils.cookies.get, 'function', 'Is get() method present in namespace?' );
-						fireunit.compare( typeof $.cookies.get, 'function', 'Is get() method present in jQ?' );
-						fireunit.compare( typeof window.jaaulde.utils.cookies.set, 'function', 'Is set() method present in namespace?' );
-						fireunit.compare( typeof $.cookies.set, 'function', 'Is set() method present in jQ?' );
-						fireunit.compare( typeof window.jaaulde.utils.cookies.filter, 'function', 'Is filter() method present in namespace?' );
-						fireunit.compare( typeof $.cookies.filter, 'function', 'Is filter() method present in jQ?' );
-						fireunit.compare( typeof window.jaaulde.utils.cookies.del, 'function', 'Is del() method present in namespace?' );
-						fireunit.compare( typeof $.cookies.del, 'function', 'Is del() method present in jQ?' );
-						fireunit.compare( typeof window.jaaulde.utils.cookies.test, 'function', 'Is test() method present in namespace?' );
-						fireunit.compare( typeof $.cookies.test, 'function', 'Is test() method present in jQ?' );
-						fireunit.compare( typeof window.jaaulde.utils.cookies.setOptions, 'function', 'Is setoptions() method present in namespace?' );
-						fireunit.compare( typeof $.cookies.setOptions, 'function', 'Is setoptions() method present in jQ?' );
-					//Test for jQ extension methods
-						fireunit.compare( typeof $.fn.cookify, 'function', 'Is cookify() jQ extension method present?' );
-						fireunit.compare( typeof $.fn.cookieFill, 'function', 'Is cookieFill() jQ extension method present?' );
-						fireunit.compare( typeof $.fn.cookieBind, 'function', 'Is cookieBind() jQ extension method present?' );
+			(function (global) {
+			    var fireunit = global.fireunit;
 
-				//Start into real testing of the library
+			    //Testing presence of namespaces
+				fireunit.compare(typeof window.jaaulde, 'object', 'Is window.jaaulde namespace loaded?');
+				fireunit.compare(typeof window.jaaulde.utils, 'object', 'Is window.jaaulde.utils namespace loaded?');
+				fireunit.compare(typeof window.jaaulde.utils.cookies, 'object', 'Is window.jaaulde.utils.cookies loaded?');
+				fireunit.compare(typeof window.jQuery, 'function', 'Is window.jQuery loaded?');
+				fireunit.compare(typeof window.$, 'function', 'Is window.$ loaded?');
+				fireunit.compare(window.jQuery, window.$, 'Is window.jQuery aliased as window.$?');
+			    //Check that jQuery extension-ization took place
+				fireunit.compare(typeof $.cookies, 'object', 'Is cookies loaded in under jQuery?');
+			    //Check presence of public methods under own namespace and jQuery
+				fireunit.compare(typeof window.jaaulde.utils.cookies.get, 'function', 'Is get() method present in namespace?');
+				fireunit.compare(typeof $.cookies.get, 'function', 'Is get() method present in jQ?');
+				fireunit.compare(typeof window.jaaulde.utils.cookies.set, 'function', 'Is set() method present in namespace?');
+				fireunit.compare(typeof $.cookies.set, 'function', 'Is set() method present in jQ?');
+				fireunit.compare(typeof window.jaaulde.utils.cookies.filter, 'function', 'Is filter() method present in namespace?');
+				fireunit.compare(typeof $.cookies.filter, 'function', 'Is filter() method present in jQ?');
+				fireunit.compare(typeof window.jaaulde.utils.cookies.del, 'function', 'Is del() method present in namespace?');
+				fireunit.compare(typeof $.cookies.del, 'function', 'Is del() method present in jQ?');
+				fireunit.compare(typeof window.jaaulde.utils.cookies.test, 'function', 'Is test() method present in namespace?');
+				fireunit.compare(typeof $.cookies.test, 'function', 'Is test() method present in jQ?');
+				fireunit.compare(typeof window.jaaulde.utils.cookies.setOptions, 'function', 'Is setoptions() method present in namespace?');
+				fireunit.compare(typeof $.cookies.setOptions, 'function', 'Is setoptions() method present in jQ?');
+			    //Test for jQ extension methods
+				fireunit.compare(typeof $.fn.cookify, 'function', 'Is cookify() jQ extension method present?');
+				fireunit.compare(typeof $.fn.cookieFill, 'function', 'Is cookieFill() jQ extension method present?');
+				fireunit.compare(typeof $.fn.cookieBind, 'function', 'Is cookieBind() jQ extension method present?');
 
-					//Does this browser accept cookies?
-						fireunit.compare( true, $.cookies.test(), 'Does this browser accept cookies?' );
-					//Does getting a cookie which has not been set return null
-						fireunit.compare( null, $.cookies.get( 'neverbeenset' ), 'Does get() of a non-existant cookie return null?' );
-					//Does a cookie always return as set?
-						var testcookielist = {
-							test1: 'value1',
-							test2: 'name=value&amp;name1=value1&amp;name2=value2',
-							test3: 'I am a long cookie value hyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefd',
-							test4: 'I am a very long cookie value hyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefdbhufghhgf65t4rt7676^^6546fygshgdgdvut^%$5erfgUUhy8761dbhjfbhvcdszX%^%$%$%DFGHGYUTYR%$EDRFVFDcghvfdxcvjhbvcfgxdsxcghv hyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefdbhufghhgf65t4rt7676^^6546fygshgdgdvut^%$5erfgUUhy8761dbhjfbhvcdszX%^%$%$%DFGHGYUTYR%$EDRFVFDcghvfdxcvjhbvcfgxdsxcghv'
-						};
-						for( name in testcookielist )
-						{
-							$.cookies.set( name, testcookielist[name] );
-							fireunit.compare( $.cookies.get( name ), testcookielist[name], 'Did running set() and get() methods on cookie, ' + name + ', return proper value?' );
-						}
+                //Start into real testing of the library
 
-					//Does an object set to cookies return properly unserilaized?
-						var testObject = {
-							one: 'one',
-							two: true,
-							three: [
-								'one',
-								'two',
-								'three'
-							],
-							four: {
-								one: 'one',
-								two: false
-							}
-						};
-						$.cookies.set( 'testingJSON', testObject );
-						var retrievedObject = $.cookies.get( 'testingJSON' );
-						fireunit.compare( typeof retrievedObject, 'object', 'Does JSON serialization and un-serialization work 1?' );
-						fireunit.compare( typeof testObject['one'], 'string', 'Does JSON serialization and un-serialization work 2?' );
-						fireunit.compare( testObject['one'], retrievedObject['one'], 'Does JSON serialization and un-serialization work 3?' );
-						fireunit.compare( typeof testObject['two'], 'boolean', 'Does JSON serialization and un-serialization work 4?' );
-						fireunit.compare( testObject['two'], retrievedObject['two'], 'Does JSON serialization and un-serialization work 5?' );
-						fireunit.compare( testObject['three'] instanceof Array, true, 'Does JSON serialization and un-serialization work 6?' );
-						fireunit.compare( testObject['three'][0], retrievedObject['three'][0], 'Does JSON serialization and un-serialization work 7?' );
-						fireunit.compare( testObject['three'][1], retrievedObject['three'][1], 'Does JSON serialization and un-serialization work 8?' );
-						fireunit.compare( testObject['three'][2], retrievedObject['three'][2], 'Does JSON serialization and un-serialization work 9?' );
-						fireunit.compare( typeof testObject['four'], 'object', 'Does JSON serialization and un-serialization work 10?' );
-						fireunit.compare( testObject['four']['one'], retrievedObject['four']['one'], 'Does JSON serialization and un-serialization work 11?' );
-						fireunit.compare( testObject['four']['two'], retrievedObject['four']['two'], 'Does JSON serialization and un-serialization work 12?' );
-
-						$.cookies.set( 'testingJSON', true );
-						fireunit.compare( typeof $.cookies.get( 'testingJSON' ), 'boolean', 'Does JSON serialization and un-serialization work 13?' );
-						fireunit.compare( $.cookies.get( 'testingJSON' ), true, 'Does JSON serialization and un-serialization work 14?' );
-						$.cookies.set( 'testingJSON', false );
-						fireunit.compare( typeof $.cookies.get( 'testingJSON' ), 'boolean', 'Does JSON serialization and un-serialization work 15?' );
-						fireunit.compare( $.cookies.get( 'testingJSON' ), false, 'Does JSON serialization and un-serialization work? 16' );
-						$.cookies.set( 'testingJSON', 100 );
-						fireunit.compare( typeof $.cookies.get( 'testingJSON' ), 'number', 'Does JSON serialization and un-serialization work 17?' );
-						fireunit.compare( $.cookies.get( 'testingJSON' ), 100, 'Does JSON serialization and un-serialization work 18?' );
-
-					//Does a cookie with apparently malformed encoding read back without error?
-						document.cookie = 'testMalformedEncoding=%8072%8074%8073%8050; path=/';
-						fireunit.compare( $.cookies.get( 'testMalformedEncoding' ), '%8072%8074%8073%8050', 'Did malformed encoding avoid error and return the unencoded string?' );
-
-					//Do cookies get deleted properly?
-						for( name in testcookielist )
-						{
-							$.cookies.del( name );
-							fireunit.compare( null, $.cookies.get( name ), 'Did running del() method on cookie, ' + name + ', remove the value?' );
-						}
-					//Does del() remove all cookies when passed true as first param?
-						for( name in testcookielist )
-						{
-							$.cookies.set( name, testcookielist[name] );
-						}
-						$.cookies.del( true );
-						fireunit.compare( 0, document.cookie.length, 'Did running del() method for all cookies empty the cookie string?' );
-
-					//Test filter
-						var testcookielist = {
-							test1: 'value1',
-							testMatch2: 'value2',
-							matchTest3: 'value3',
-							test4: 'value4'
-						};
-						for( name in testcookielist )
-						{
-							$.cookies.set( name, testcookielist[name] );
-						}
-						var filterRegex = new RegExp( 'match', 'i' );
-						var matchedCookies = $.cookies.filter( filterRegex );
-						fireunit.compare( typeof matchedCookies,'object', 'Did filter() get object?' );
-						var cookieCount = 0;
-						for( var name in matchedCookies )
-						{
-							cookieCount++;
-						}
-						fireunit.compare( 2, cookieCount, 'Did filter get proper number of cookies' );
-						for( var name in matchedCookies )
-						{
-							fireunit.ok( ( name === 'testMatch2' || name === 'matchTest3' ), 'Did filter get back cookie of right name?' );
-
-							fireunit.ok( ( matchedCookies[name] === 'value2' || matchedCookies[name] === 'value3' ), 'Did filter get back cookie with right value?' );
-						}
-						for( name in testcookielist )
-						{
-							$.cookies.del( name );
-						}
-
-					//Test cookify
-						$( '#testCookifyInput' ).val( 'Value for cookify input' ).cookify();
-						fireunit.compare( 'Value for cookify input', $.cookies.get( 'testCookifyInput' ), 'Does cookify() method set correct value on an input?' );
-						$.cookies.del( 'testCookifyInput' );
-
-						$( '#testCookifyCheckboxC' ).val( 'Value for cookify checked checkbox' ).cookify();
-						fireunit.compare( 'Value for cookify checked checkbox', $.cookies.get( 'testCookifyCheckboxC' ), 'Does cookify() method set correct value on a checked checkbox?' );
-						$.cookies.del( 'testCookifyCheckboxC' );
-
-						$( '#testCookifyCheckboxU' ).val( 'Value for cookify unchecked checkbox' ).cookify();
-						fireunit.compare( null, $.cookies.get( 'testCookifyCheckboxU' ), 'Does cookify() method set correct value on an unchecked checkbox?' );
-						$.cookies.del( 'testCookifyCheckboxU' );
-
-						$( '#testCookifyRadioC' ).val( 'Value for cookify checked radio' ).cookify();
-						fireunit.compare( 'Value for cookify checked radio', $.cookies.get( 'testCookifyRadioC' ), 'Does cookify() method set correct value on a checked radio?' );
-						$.cookies.del( 'testCookifyRadioC' );
-
-						$( '#testCookifyRadioU' ).val( 'Value for cookify unchecked radio' ).cookify();
-						fireunit.compare( null, $.cookies.get( 'testCookifyRadioU' ), 'Does cookify() method set correct value on an unchecked radio?' );
-						$.cookies.del( 'testCookifyRadioU' );
-
-						$( '#testCookifyTextarea' ).val( 'Value for cookify textarea' ).cookify();
-						fireunit.compare( 'Value for cookify textarea', $.cookies.get( 'testCookifyTextarea' ), 'Does cookify() method set correct value on a textarea?' );
-						$.cookies.del( 'testCookifyTextarea' );
-
-						$( '#testCookifySelect' ).val( '1' ).cookify();
-						fireunit.compare( '1', $.cookies.get( 'testCookifySelect' ), 'Does cookify() method set correct value on a select?' );
-						$.cookies.del( 'testCookifySelect' );
-						
-						$( '#testCookifyParagraph' ).html( 'Value for cookify paragraph' ).cookify();
-						fireunit.compare( 'Value for cookify paragraph', $.cookies.get( 'testCookifyParagraph' ), 'Does cookify() method set correct value on a paragraph?' );
-						$.cookies.del( 'testCookifyParagraph' );
-
-					//Test cookieFill
-						$.cookies.set( 'testCookieFillInput', 'Value for cookie fill input' );
-						$( '#testCookieFillInput' ).cookieFill();
-						fireunit.compare( 'Value for cookie fill input', $( '#testCookieFillInput' ).val(), 'Does cookieFill() method fill correct field with correct value for input?' );
-						$.cookies.del( 'testCookieFillInput' );
-
-						$.cookies.set( 'testCookiFillCheckboxC', 'Value for cookie fill checkbox check' );
-						$( '#testCookiFillCheckboxC' ).cookieFill();
-						fireunit.compare( true, $( '#testCookiFillCheckboxC' ).attr( 'checked' ), 'Does cookiFill() method checked checkbox correctly?' );
-						$.cookies.del( 'testCookiFillCheckboxC' );
-
-						$.cookies.set( 'testCookiFillCheckboxU', 'garbage' );
-						$( '#testCookiFillCheckboxU' ).cookieFill();
-						fireunit.compare( false, $( '#testCookiFillCheckboxU' ).attr( 'checked' ), 'Does cookiFill() method uncheck checkbox correctly?' );
-						$.cookies.del( 'testCookiFillCheckboxU' );
-
-						$.cookies.set( 'testCookiFillRadioC', 'Value for cookie fill radio check' );
-						$( '#testCookiFillRadioC' ).cookieFill();
-						fireunit.compare( true, $( '#testCookiFillRadioC' ).attr( 'checked' ), 'Does cookiFill() method checked radio correctly?' );
-						$.cookies.del( 'testCookiFillRadioC' );
-
-						$.cookies.set( 'testCookiFillRadioU', 'garbage' );
-						$( '#testCookiFillRadioU' ).cookieFill();
-						fireunit.compare( false, $( '#testCookiFillRadioU' ).attr( 'checked' ), 'Does cookiFill() method uncheck radio correctly?' );
-						$.cookies.del( 'testCookiFillRadioU' );
-
-						$.cookies.set( 'testCookieFillTextarea', 'Value for cookie fill textarea' );
-						$( '#testCookieFillTextarea' ).cookieFill();
-						fireunit.compare( 'Value for cookie fill textarea', $( '#testCookieFillTextarea' ).val(), 'Does cookieFill() method fill correct field with correct value for textarea?' );
-						$.cookies.del( 'testCookieFillTextarea' );
-
-						$.cookies.set( 'testCookieFillSelect', '2' );
-						$( '#testCookieFillSelect' ).cookieFill();
-						fireunit.compare( '2', $( '#testCookieFillSelect' ).val(), 'Does cookieFill() method fill correct field with correct value for select?' );
-						$.cookies.del( 'testCookieFillSelect' );
-
-						$.cookies.set( 'testCookieFillParagraph', 'Value for cookie fill paragraph' );
-						$( '#testCookieFillParagraph' ).cookieFill();
-						fireunit.compare( 'Value for cookie fill paragraph', $( '#testCookieFillParagraph' ).html(), 'Does cookieFill() method fill correct field with correct value for paragraph?' );
-						$.cookies.del( 'testCookieFillParagraph' );
-
-					//Test cookie bind
-						$.cookies.set( 'testCookieBindInput', 'First value for cookie bind input' );
-						$( '#testCookieBindInput' ).cookieBind();
-						fireunit.compare( 'First value for cookie bind input', $( '#testCookieBindInput' ).val(), 'Does cookieBind() method fill correct field with correct value for input?' );
-						$( '#testCookieBindInput' ).val( 'Second value for cookie bind input' ).change();
-						fireunit.compare( 'Second value for cookie bind input', $.cookies.get( 'testCookieBindInput' ), 'Does cookieBind() method set correct cookie when field changes for input?' );
-						$.cookies.del( 'testCookieBindInput' );
-
-						$.cookies.set( 'testCookieBindCheckboxC', 'First value for cookie bind checkbox' );
-						$( '#testCookieBindCheckboxC' ).cookieBind();
-						fireunit.compare( true, $( '#testCookieBindCheckboxC' ).attr( 'checked' ), 'Does cookieBind() method check correct checkbox?' );
-						$( '#testCookieBindCheckboxC' ).removeAttr( 'checked' ).change();
-						fireunit.compare( null, $.cookies.get( 'testCookieBindCheckboxC' ), 'Does cookieBind() method remove cookie when checkbox is unchecked?' );
-						$.cookies.del( 'testCookieBindCheckboxC' );
-
-						$.cookies.set( 'testCookieBindCheckboxU', 'First value for cookie bind checkbox' );
-						$( '#testCookieBindCheckboxU' ).cookieBind();
-						fireunit.compare( false, $( '#testCookieBindCheckboxU' ).attr( 'checked' ), 'Does cookieBind() method uncheck correct checkbox?' );
-						$( '#testCookieBindCheckboxU' ).attr( 'checked', true ).change();
-						fireunit.compare( 'VALUE', $.cookies.get( 'testCookieBindCheckboxU' ), 'Does cookieBind() method set correct cookie when checkbox is checked?' );
-						$.cookies.del( 'testCookieBindCheckboxU' );
-
-						$.cookies.set( 'testCookieBindRadioC', 'First value for cookie bind radio' );
-						$( '#testCookieBindRadioC' ).cookieBind();
-						fireunit.compare( true, $( '#testCookieBindRadioC' ).attr( 'checked' ), 'Does cookieBind() method check correct radio?' );
-						$( '#testCookieBindRadioC' ).removeAttr( 'checked' ).change();
-						fireunit.compare( null, $.cookies.get( 'testCookieBindRadioC' ), 'Does cookieBind() method remove cookie when radio is unchecked?' );
-						$.cookies.del( 'testCookieBindRadioC' );
-
-						$.cookies.set( 'testCookieBindRadioU', 'First value for cookie bind radio' );
-						$( '#testCookieBindRadioU' ).cookieBind();
-						fireunit.compare( false, $( '#testCookieBindRadioU' ).attr( 'checked' ), 'Does cookieBind() method uncheck correct radio?' );
-						$( '#testCookieBindRadioU' ).attr( 'checked', true ).change();
-						fireunit.compare( 'VALUE', $.cookies.get( 'testCookieBindRadioU' ), 'Does cookieBind() method set correct cookie when radio is checked?' );
-						$.cookies.del( 'testCookieBindRadioU' );
-
-						$.cookies.set( 'testCookieBindTextarea', 'First value for cookie bind textarea' );
-						$( '#testCookieBindTextarea' ).cookieBind();
-						fireunit.compare( 'First value for cookie bind textarea', $( '#testCookieBindTextarea' ).val(), 'Does cookieBind() method fill correct field with correct value for textarea?' );
-						$( '#testCookieBindTextarea' ).val( 'Second value for cookie bind textarea' ).change();
-						fireunit.compare( 'Second value for cookie bind textarea', $.cookies.get( 'testCookieBindTextarea' ), 'Does cookieBind() method set correct cookie when field changes for textarea?' );
-						$.cookies.del( 'testCookieBindTextarea' );
-
-						$.cookies.set( 'testCookieBindSelect', '2' );
-						$( '#testCookieBindSelect' ).cookieBind();
-						fireunit.compare( '2', $( '#testCookieBindSelect' ).val(), 'Does cookieBind() method fill correct field with correct value for select?' );
-						$( '#testCookieBindSelect' ).val( '0' ).change();
-						fireunit.compare( '0', $.cookies.get( 'testCookieBindSelect' ), 'Does cookieBind() method set correct cookie when field changes for select?' );
-						$.cookies.del( 'testCookieBindSelect' );
-
-						$.cookies.set( 'testCookieBindParagraph', 'First value for cookie bind paragraph' );
-						$( '#testCookieBindParagraph' ).cookieBind();
-						fireunit.compare( 'First value for cookie bind paragraph', $( '#testCookieBindParagraph' ).html(), 'Does cookieBind() method fill correct field with correct value for paragraph?' );
-						$( '#testCookieBindParagraph' ).html( 'Second value for cookie bind paragraph' ).change();
-						fireunit.compare( 'Second value for cookie bind paragraph', $.cookies.get( 'testCookieBindParagraph' ), 'Does cookieBind() method set correct cookie when field changes for paragraph?' );
-						$.cookies.del( 'testCookieBindParagraph' );
-
-					//Test if date object works for expiration
-						var exp = new Date();
-						exp.setTime( exp.getTime() + 1000 );
-						$.cookies.set( 'testExpWithDate', 'EXP DATE', { expiresAt: exp } );
-						var notExp = new Date();
-						notExp.setTime( notExp.getTime() + 5000 );
-						$.cookies.set( 'testNotExpWithDate', 'NO EXP DATE', { expiresAt: notExp } );
-						window.setTimeout( function()
-						{
-							fireunit.compare( $.cookies.get( 'testExpWithDate' ), null, 'Does expiresAt option work to expire?' );
-							fireunit.compare( $.cookies.get( 'testNotExpWithDate' ), 'NO EXP DATE', 'Does expiresAt option work to not expire?' );
-
-					//Testing complete
-							fireunit.testDone();
-						}, 2000 );
-
-					} )( window.fireunit );
+                //Does this browser accept cookies?
+				fireunit.compare(true, $.cookies.test(), 'Does this browser accept cookies?');
+                //Does getting a cookie which has not been set return null
+				fireunit.compare(null, $.cookies.get('neverbeenset'), 'Does get() of a non-existant cookie return null?');
+                //Does a cookie always return as set?
+				var testcookielist = {
+					test1: 'value1',
+					test2: 'name=value&amp;name1=value1&amp;name2=value2',
+					test3: 'I am a long cookie value hyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefd',
+					test4: 'I am a very long cookie value hyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefdbhufghhgf65t4rt7676^^6546fygshgdgdvut^%$5erfgUUhy8761dbhjfbhvcdszX%^%$%$%DFGHGYUTYR%$EDRFVFDcghvfdxcvjhbvcfgxdsxcghv hyubufnhvjsghdvjbdhjvbjdsbvhjgdbhjgjknvhdjlknuvhjakvhgbjvhjklghvyabguhragagfrtyefghjgbhgbhjbhgj,dhgbvhjkhfkjfkht5465rt7^$%%$%#%RYgdhefdbhufghhgf65t4rt7676^^6546fygshgdgdvut^%$5erfgUUhy8761dbhjfbhvcdszX%^%$%$%DFGHGYUTYR%$EDRFVFDcghvfdxcvjhbvcfgxdsxcghv'
+				};
+				for (name in testcookielist) {
+					$.cookies.set(name, testcookielist[name]);
+					fireunit.compare($.cookies.get(name), testcookielist[name], 'Did running set() and get() methods on cookie, ' + name + ', return proper value?');
 				}
-        else
-        {
-          console.error( 'FireUnit not available.' );
-        }
-			} )();
+
+                //Does an object set to cookies return properly unserilaized?
+				var testObject = {
+					one: 'one',
+					two: true,
+					three: [
+						'one',
+						'two',
+						'three'
+					],
+					four: {
+						one: 'one',
+						two: false
+					}
+				};
+				$.cookies.set('testingJSON', testObject);
+				var retrievedObject = $.cookies.get('testingJSON');
+				fireunit.compare(typeof retrievedObject, 'object', 'Does JSON serialization and un-serialization work 1?');
+				fireunit.compare(typeof testObject['one'], 'string', 'Does JSON serialization and un-serialization work 2?');
+				fireunit.compare(testObject['one'], retrievedObject['one'], 'Does JSON serialization and un-serialization work 3?');
+				fireunit.compare(typeof testObject['two'], 'boolean', 'Does JSON serialization and un-serialization work 4?');
+				fireunit.compare(testObject['two'], retrievedObject['two'], 'Does JSON serialization and un-serialization work 5?');
+				fireunit.compare(testObject['three'] instanceof Array, true, 'Does JSON serialization and un-serialization work 6?');
+				fireunit.compare(testObject['three'][0], retrievedObject['three'][0], 'Does JSON serialization and un-serialization work 7?');
+				fireunit.compare(testObject['three'][1], retrievedObject['three'][1], 'Does JSON serialization and un-serialization work 8?');
+				fireunit.compare(testObject['three'][2], retrievedObject['three'][2], 'Does JSON serialization and un-serialization work 9?');
+				fireunit.compare(typeof testObject['four'], 'object', 'Does JSON serialization and un-serialization work 10?');
+				fireunit.compare(testObject['four']['one'], retrievedObject['four']['one'], 'Does JSON serialization and un-serialization work 11?');
+				fireunit.compare(testObject['four']['two'], retrievedObject['four']['two'], 'Does JSON serialization and un-serialization work 12?');
+
+				$.cookies.set('testingJSON', true);
+				fireunit.compare(typeof $.cookies.get('testingJSON'), 'boolean', 'Does JSON serialization and un-serialization work 13?');
+				fireunit.compare($.cookies.get('testingJSON'), true, 'Does JSON serialization and un-serialization work 14?');
+				$.cookies.set('testingJSON', false);
+				fireunit.compare(typeof $.cookies.get('testingJSON'), 'boolean', 'Does JSON serialization and un-serialization work 15?');
+				fireunit.compare($.cookies.get('testingJSON'), false, 'Does JSON serialization and un-serialization work? 16');
+				$.cookies.set('testingJSON', 100);
+				fireunit.compare(typeof $.cookies.get('testingJSON'), 'number', 'Does JSON serialization and un-serialization work 17?');
+				fireunit.compare($.cookies.get('testingJSON'), 100, 'Does JSON serialization and un-serialization work 18?');
+
+                //Does a cookie with apparently malformed encoding read back without error?
+				document.cookie = 'testMalformedEncoding=%8072%8074%8073%8050; path=/';
+				fireunit.compare($.cookies.get('testMalformedEncoding'), '%8072%8074%8073%8050', 'Did malformed encoding avoid error and return the unencoded string?');
+
+                //Do cookies get deleted properly?
+				for (name in testcookielist) {
+					$.cookies.del(name);
+					fireunit.compare(null, $.cookies.get(name), 'Did running del() method on cookie, ' + name + ', remove the value?');
+				}
+                //Does del() remove all cookies when passed true as first param?
+				for (name in testcookielist) {
+					$.cookies.set(name, testcookielist[name]);
+				}
+				$.cookies.del(true);
+				fireunit.compare(0, document.cookie.length, 'Did running del() method for all cookies empty the cookie string?');
+
+                //Test filter
+				var testcookielist = {
+					test1: 'value1',
+					testMatch2: 'value2',
+					matchTest3: 'value3',
+					test4: 'value4'
+				};
+				for (name in testcookielist) {
+					$.cookies.set(name, testcookielist[name]);
+				}
+				var filterRegex = new RegExp('match', 'i');
+				var matchedCookies = $.cookies.filter(filterRegex);
+				fireunit.compare(typeof matchedCookies,'object', 'Did filter() get object?');
+				var cookieCount = 0;
+				for (var name in matchedCookies) {
+					cookieCount++;
+				}
+				fireunit.compare(2, cookieCount, 'Did filter get proper number of cookies');
+				for (var name in matchedCookies) {
+					fireunit.ok((name === 'testMatch2' || name === 'matchTest3'), 'Did filter get back cookie of right name?');
+
+					fireunit.ok((matchedCookies[name] === 'value2' || matchedCookies[name] === 'value3'), 'Did filter get back cookie with right value?');
+				}
+				for (name in testcookielist) {
+					$.cookies.del(name);
+				}
+
+			    //Test cookify
+				$('#testCookifyInput').val('Value for cookify input').cookify();
+				fireunit.compare('Value for cookify input', $.cookies.get('testCookifyInput'), 'Does cookify() method set correct value on an input?');
+				$.cookies.del('testCookifyInput');
+
+				$('#testCookifyCheckboxC').val('Value for cookify checked checkbox').cookify();
+				fireunit.compare('Value for cookify checked checkbox', $.cookies.get('testCookifyCheckboxC'), 'Does cookify() method set correct value on a checked checkbox?');
+				$.cookies.del('testCookifyCheckboxC');
+
+				$('#testCookifyCheckboxU').val('Value for cookify unchecked checkbox').cookify();
+				fireunit.compare(null, $.cookies.get('testCookifyCheckboxU'), 'Does cookify() method set correct value on an unchecked checkbox?');
+				$.cookies.del('testCookifyCheckboxU');
+
+				$('#testCookifyRadioC').val('Value for cookify checked radio').cookify();
+				fireunit.compare('Value for cookify checked radio', $.cookies.get('testCookifyRadioC'), 'Does cookify() method set correct value on a checked radio?');
+				$.cookies.del('testCookifyRadioC');
+
+				$('#testCookifyRadioU').val('Value for cookify unchecked radio').cookify();
+				fireunit.compare(null, $.cookies.get('testCookifyRadioU'), 'Does cookify() method set correct value on an unchecked radio?');
+				$.cookies.del('testCookifyRadioU');
+
+				$('#testCookifyTextarea').val('Value for cookify textarea').cookify();
+				fireunit.compare('Value for cookify textarea', $.cookies.get('testCookifyTextarea'), 'Does cookify() method set correct value on a textarea?');
+				$.cookies.del('testCookifyTextarea');
+
+				$('#testCookifySelect').val('1').cookify();
+				fireunit.compare('1', $.cookies.get('testCookifySelect'), 'Does cookify() method set correct value on a select?');
+				$.cookies.del('testCookifySelect');
+				
+				$('#testCookifyParagraph').html('Value for cookify paragraph').cookify();
+				fireunit.compare('Value for cookify paragraph', $.cookies.get('testCookifyParagraph'), 'Does cookify() method set correct value on a paragraph?');
+				$.cookies.del('testCookifyParagraph');
+
+			//Test cookieFill
+				$.cookies.set('testCookieFillInput', 'Value for cookie fill input');
+				$('#testCookieFillInput').cookieFill();
+				fireunit.compare('Value for cookie fill input', $('#testCookieFillInput').val(), 'Does cookieFill() method fill correct field with correct value for input?');
+				$.cookies.del('testCookieFillInput');
+
+				$.cookies.set('testCookiFillCheckboxC', 'Value for cookie fill checkbox check');
+				$('#testCookiFillCheckboxC').cookieFill();
+				fireunit.compare(true, $('#testCookiFillCheckboxC').attr('checked'), 'Does cookiFill() method checked checkbox correctly?');
+				$.cookies.del('testCookiFillCheckboxC');
+
+				$.cookies.set('testCookiFillCheckboxU', 'garbage');
+				$('#testCookiFillCheckboxU').cookieFill();
+				fireunit.compare(false, $('#testCookiFillCheckboxU').attr('checked'), 'Does cookiFill() method uncheck checkbox correctly?');
+				$.cookies.del('testCookiFillCheckboxU');
+
+				$.cookies.set('testCookiFillRadioC', 'Value for cookie fill radio check');
+				$('#testCookiFillRadioC').cookieFill();
+				fireunit.compare(true, $('#testCookiFillRadioC').attr('checked'), 'Does cookiFill() method checked radio correctly?');
+				$.cookies.del('testCookiFillRadioC');
+
+				$.cookies.set('testCookiFillRadioU', 'garbage');
+				$('#testCookiFillRadioU').cookieFill();
+				fireunit.compare(false, $('#testCookiFillRadioU').attr('checked'), 'Does cookiFill() method uncheck radio correctly?');
+				$.cookies.del('testCookiFillRadioU');
+
+				$.cookies.set('testCookieFillTextarea', 'Value for cookie fill textarea');
+				$('#testCookieFillTextarea').cookieFill();
+				fireunit.compare('Value for cookie fill textarea', $('#testCookieFillTextarea').val(), 'Does cookieFill() method fill correct field with correct value for textarea?');
+				$.cookies.del('testCookieFillTextarea');
+
+				$.cookies.set('testCookieFillSelect', '2');
+				$('#testCookieFillSelect').cookieFill();
+				fireunit.compare('2', $('#testCookieFillSelect').val(), 'Does cookieFill() method fill correct field with correct value for select?');
+				$.cookies.del('testCookieFillSelect');
+
+				$.cookies.set('testCookieFillParagraph', 'Value for cookie fill paragraph');
+				$('#testCookieFillParagraph').cookieFill();
+				fireunit.compare('Value for cookie fill paragraph', $('#testCookieFillParagraph').html(), 'Does cookieFill() method fill correct field with correct value for paragraph?');
+				$.cookies.del('testCookieFillParagraph');
+
+			//Test cookie bind
+				$.cookies.set('testCookieBindInput', 'First value for cookie bind input');
+				$('#testCookieBindInput').cookieBind();
+				fireunit.compare('First value for cookie bind input', $('#testCookieBindInput').val(), 'Does cookieBind() method fill correct field with correct value for input?');
+				$('#testCookieBindInput').val('Second value for cookie bind input').change();
+				fireunit.compare('Second value for cookie bind input', $.cookies.get('testCookieBindInput'), 'Does cookieBind() method set correct cookie when field changes for input?');
+				$.cookies.del('testCookieBindInput');
+
+				$.cookies.set('testCookieBindCheckboxC', 'First value for cookie bind checkbox');
+				$('#testCookieBindCheckboxC').cookieBind();
+				fireunit.compare(true, $('#testCookieBindCheckboxC').attr('checked'), 'Does cookieBind() method check correct checkbox?');
+				$('#testCookieBindCheckboxC').removeAttr('checked').change();
+				fireunit.compare(null, $.cookies.get('testCookieBindCheckboxC'), 'Does cookieBind() method remove cookie when checkbox is unchecked?');
+				$.cookies.del('testCookieBindCheckboxC');
+
+				$.cookies.set('testCookieBindCheckboxU', 'First value for cookie bind checkbox');
+				$('#testCookieBindCheckboxU').cookieBind();
+				fireunit.compare(false, $('#testCookieBindCheckboxU').attr('checked'), 'Does cookieBind() method uncheck correct checkbox?');
+				$('#testCookieBindCheckboxU').attr('checked', true).change();
+				fireunit.compare('VALUE', $.cookies.get('testCookieBindCheckboxU'), 'Does cookieBind() method set correct cookie when checkbox is checked?');
+				$.cookies.del('testCookieBindCheckboxU');
+
+				$.cookies.set('testCookieBindRadioC', 'First value for cookie bind radio');
+				$('#testCookieBindRadioC').cookieBind();
+				fireunit.compare(true, $('#testCookieBindRadioC').attr('checked'), 'Does cookieBind() method check correct radio?');
+				$('#testCookieBindRadioC').removeAttr('checked').change();
+				fireunit.compare(null, $.cookies.get('testCookieBindRadioC'), 'Does cookieBind() method remove cookie when radio is unchecked?');
+				$.cookies.del('testCookieBindRadioC');
+
+				$.cookies.set('testCookieBindRadioU', 'First value for cookie bind radio');
+				$('#testCookieBindRadioU').cookieBind();
+				fireunit.compare(false, $('#testCookieBindRadioU').attr('checked'), 'Does cookieBind() method uncheck correct radio?');
+				$('#testCookieBindRadioU').attr('checked', true).change();
+				fireunit.compare('VALUE', $.cookies.get('testCookieBindRadioU'), 'Does cookieBind() method set correct cookie when radio is checked?');
+				$.cookies.del('testCookieBindRadioU');
+
+				$.cookies.set('testCookieBindTextarea', 'First value for cookie bind textarea');
+				$('#testCookieBindTextarea').cookieBind();
+				fireunit.compare('First value for cookie bind textarea', $('#testCookieBindTextarea').val(), 'Does cookieBind() method fill correct field with correct value for textarea?');
+				$('#testCookieBindTextarea').val('Second value for cookie bind textarea').change();
+				fireunit.compare('Second value for cookie bind textarea', $.cookies.get('testCookieBindTextarea'), 'Does cookieBind() method set correct cookie when field changes for textarea?');
+				$.cookies.del('testCookieBindTextarea');
+
+				$.cookies.set('testCookieBindSelect', '2');
+				$('#testCookieBindSelect').cookieBind();
+				fireunit.compare('2', $('#testCookieBindSelect').val(), 'Does cookieBind() method fill correct field with correct value for select?');
+				$('#testCookieBindSelect').val('0').change();
+				fireunit.compare('0', $.cookies.get('testCookieBindSelect'), 'Does cookieBind() method set correct cookie when field changes for select?');
+				$.cookies.del('testCookieBindSelect');
+
+				$.cookies.set('testCookieBindParagraph', 'First value for cookie bind paragraph');
+				$('#testCookieBindParagraph').cookieBind();
+				fireunit.compare('First value for cookie bind paragraph', $('#testCookieBindParagraph').html(), 'Does cookieBind() method fill correct field with correct value for paragraph?');
+				$('#testCookieBindParagraph').html('Second value for cookie bind paragraph').change();
+				fireunit.compare('Second value for cookie bind paragraph', $.cookies.get('testCookieBindParagraph'), 'Does cookieBind() method set correct cookie when field changes for paragraph?');
+				$.cookies.del('testCookieBindParagraph');
+
+			//Test if date object works for expiration
+				var exp = new Date();
+				exp.setTime(exp.getTime() + 1000);
+				$.cookies.set('testExpWithDate', 'EXP DATE', { expiresAt: exp });
+				var notExp = new Date();
+				notExp.setTime(notExp.getTime() + 5000);
+				$.cookies.set('testNotExpWithDate', 'NO EXP DATE', { expiresAt: notExp });
+				window.setTimeout(function () {
+					fireunit.compare($.cookies.get('testExpWithDate'), null, 'Does expiresAt option work to expire?');
+					fireunit.compare($.cookies.get('testNotExpWithDate'), 'NO EXP DATE', 'Does expiresAt option work to not expire?');
+
+			//Testing complete
+					fireunit.testDone();
+				}, 2000);
+			})(window);
 		</script>
 	</body>
 </html>
