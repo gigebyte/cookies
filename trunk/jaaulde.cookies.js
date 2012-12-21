@@ -86,30 +86,25 @@
         };
 
         /**
-         * Some logic borrowed from http://jquery.com/
+         * Some logic for `trim` and `isNaN` borrowed from http://jquery.com/
          */
-        (function () {
-            if (global.String.prototype.trim) {
-                trim = function (data) {
-                    return global.String.prototype.trim.call(data);
+        if (global.String.prototype.trim) {
+            trim = function (data) {
+                return global.String.prototype.trim.call(data);
+            };
+        } else {
+            trim = (function () {
+                var trimLeft, trimRight;
+
+                trimLeft = /^\s+/;
+                trimRight = /\s+$/;
+
+                return function (data) {
+                    return data.replace(trimLeft, '').replace(trimRight, '');
                 };
-            } else {
-                trim = (function () {
-                    var trimLeft, trimRight;
+            }());
+        }
 
-                    trimLeft = /^\s+/;
-                    trimRight = /\s+$/;
-
-                    return function (data) {
-                        return data.replace(trimLeft, '').replace(trimRight, '');
-                    };
-                }());
-            }
-        }());
-
-        /**
-         * Borrowed from http://jquery.com/
-         */
         isNaN = (function () {
             var rdigit = /\d/, isNaN = global.isNaN;
             return function (obj) {
@@ -186,172 +181,165 @@
             };
         }());
 
-        Constructor = function () {};
+        return {
+            /**
+             * get - get one, several, or all cookies
+             *
+             * @access public
+             * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
+             * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
+             */
+            get: function (cookieName) {
+                var returnValue, item, cookies;
 
-        /**
-         * get - get one, several, or all cookies
-         *
-         * @access public
-         * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
-         * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
-         */
-        Constructor.prototype.get = function (cookieName) {
-            var returnValue, item, cookies;
+                cookies = parseCookies();
 
-            cookies = parseCookies();
+                if (typeof cookieName === 'string') {
+                    returnValue = (cookies[cookieName] !== undefined) ? cookies[cookieName] : null;
+                } else if (typeof cookieName === 'object' && cookieName !== null) {
+                    returnValue = {};
 
-            if (typeof cookieName === 'string') {
-                returnValue = (cookies[cookieName] !== undefined) ? cookies[cookieName] : null;
-            } else if (typeof cookieName === 'object' && cookieName !== null) {
+                    for (item in cookieName) {
+                        if (Object.prototype.hasOwnProperty.call(cookieName, item)) {
+                            if (cookies[cookieName[item]] !== undefined) {
+                                returnValue[cookieName[item]] = cookies[cookieName[item]];
+                            } else {
+                                returnValue[cookieName[item]] = null;
+                            }
+                        }
+                    }
+                } else {
+                    returnValue = cookies;
+                }
+
+                return returnValue;
+            },
+            /**
+             * filter - get array of cookies whose names match the provided RegExp
+             *
+             * @access public
+             * @paramater Object RegExp - The regular expression to match against cookie names
+             * @return Mixed - Object:hash of cookies whose names match the RegExp
+             */
+            filter: function (cookieNameRegExp) {
+                var cookieName, returnValue, cookies;
+
                 returnValue = {};
+                cookies = parseCookies();
 
-                for (item in cookieName) {
-                    if (Object.prototype.hasOwnProperty.call(cookieName, item)) {
-                        if (cookies[cookieName[item]] !== undefined) {
-                            returnValue[cookieName[item]] = cookies[cookieName[item]];
+                if (typeof cookieNameRegExp === 'string') {
+                    cookieNameRegExp = new RegExp(cookieNameRegExp);
+                }
+
+                for (cookieName in cookies) {
+                    if (Object.prototype.hasOwnProperty.call(cookies, cookieName) && cookieName.match(cookieNameRegExp)) {
+                        returnValue[cookieName] = cookies[cookieName];
+                    }
+                }
+
+                return returnValue;
+            },
+            /**
+             * set - set or delete a cookie with desired options
+             *
+             * @access public
+             * @paramater String cookieName - name of cookie to set
+             * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded (http://code.google.com/p/cookies/wiki/JSON); NULL to delete
+             * @paramater Object options - optional list of cookie options to specify
+             * @return void
+             */
+            set: function (cookieName, value, options) {
+                if (typeof options !== 'object' || options === null) {
+                    options = {};
+                }
+
+                if (value === undefined || value === null) {
+                    value = '';
+                    options.hoursToLive = -8760;
+                } else {
+                    //Logic borrowed from http://jquery.com/ dataAttr method and reversed
+                    value = value === true
+                        ? 'true' : value === false
+                            ? 'false' : !isNaN(value)
+                                ? String(value) : value;
+
+                    if (typeof value !== 'string') {
+                        if (typeof JSON === 'object' && JSON !== null && typeof JSON.stringify === 'function') {
+                            value = JSON.stringify(value);
                         } else {
-                            returnValue[cookieName[item]] = null;
+                            throw new Error('cookies.set() received value which could not be serialized.');
                         }
                     }
                 }
-            } else {
-                returnValue = cookies;
-            }
 
-            return returnValue;
-        };
+                var optionsString = assembleOptionsString(options);
 
-        /**
-         * filter - get array of cookies whose names match the provided RegExp
-         *
-         * @access public
-         * @paramater Object RegExp - The regular expression to match against cookie names
-         * @return Mixed - Object:hash of cookies whose names match the RegExp
-         */
-        Constructor.prototype.filter = function (cookieNameRegExp) {
-            var cookieName, returnValue, cookies;
+                document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
+            },
+            /**
+             * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
+             *
+             * @access public
+             * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
+             * @paramater Object options - optional list of cookie options to specify ( path, domain )
+             * @return void
+             */
+            del: function (cookieName, options) {
+                var allCookies, name;
 
-            returnValue = {};
-            cookies = parseCookies();
+                allCookies = {};
 
-            if (typeof cookieNameRegExp === 'string') {
-                cookieNameRegExp = new RegExp(cookieNameRegExp);
-            }
-
-            for (cookieName in cookies) {
-                if (Object.prototype.hasOwnProperty.call(cookies, cookieName) && cookieName.match(cookieNameRegExp)) {
-                    returnValue[cookieName] = cookies[cookieName];
+                if (typeof options !== 'object' || options === null) {
+                    options = {};
                 }
-            }
 
-            return returnValue;
-        };
+                if (typeof cookieName === 'boolean' && cookieName === true) {
+                    allCookies = this.get();
+                } else if (typeof cookieName === 'string') {
+                    allCookies[cookieName] = true;
+                }
 
-        /**
-         * set - set or delete a cookie with desired options
-         *
-         * @access public
-         * @paramater String cookieName - name of cookie to set
-         * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded (http://code.google.com/p/cookies/wiki/JSON); NULL to delete
-         * @paramater Object options - optional list of cookie options to specify
-         * @return void
-         */
-        Constructor.prototype.set = function (cookieName, value, options) {
-            if (typeof options !== 'object' || options === null) {
-                options = {};
-            }
-
-            if (value === undefined || value === null) {
-                value = '';
-                options.hoursToLive = -8760;
-            } else {
-                //Logic borrowed from http://jquery.com/ dataAttr method and reversed
-                value = value === true
-                    ? 'true' : value === false
-                        ? 'false' : !isNaN(value)
-                            ? String(value) : value;
-
-                if (typeof value !== 'string') {
-                    if (typeof JSON === 'object' && JSON !== null && typeof JSON.stringify === 'function') {
-                        value = JSON.stringify(value);
-                    } else {
-                        throw new Error('cookies.set() received value which could not be serialized.');
+                for (name in allCookies) {
+                    if (Object.prototype.hasOwnProperty.call(allCookies, name) && typeof name === 'string' && name !== '') {
+                        this.set(name, null, options);
                     }
                 }
-            }
+            },
+            /**
+             * test - test whether the browser is accepting cookies
+             *
+             * @access public
+             * @return Boolean
+             */
+            test: function () {
+                var returnValue, testName, testValue;
 
-            var optionsString = assembleOptionsString(options);
+                testName = 'cookiesCT';
+                testValue = 'data';
 
-            document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
-        };
+                this.set(testName, testValue);
 
-        /**
-         * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
-         *
-         * @access public
-         * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
-         * @paramater Object options - optional list of cookie options to specify ( path, domain )
-         * @return void
-         */
-        Constructor.prototype.del = function (cookieName, options) {
-            var allCookies, name;
-
-            allCookies = {};
-
-            if (typeof options !== 'object' || options === null) {
-                options = {};
-            }
-
-            if (typeof cookieName === 'boolean' && cookieName === true) {
-                allCookies = this.get();
-            } else if (typeof cookieName === 'string') {
-                allCookies[cookieName] = true;
-            }
-
-            for (name in allCookies) {
-                if (Object.prototype.hasOwnProperty.call(allCookies, name) && typeof name === 'string' && name !== '') {
-                    this.set(name, null, options);
+                if (this.get(testName) === testValue) {
+                    this.del(testName);
+                    returnValue = true;
                 }
+
+                return returnValue;
+            },
+            /**
+             * setOptions - set default options for calls to cookie methods
+             *
+             * @access public
+             * @param Object options - list of cookie options to specify
+             * @return void
+             */
+            setOptions: function (options) {
+                if (typeof options !== 'object') {
+                    options = null;
+                }
+
+                defaultOptions = resolveOptions(options);
             }
         };
-
-        /**
-         * test - test whether the browser is accepting cookies
-         *
-         * @access public
-         * @return Boolean
-         */
-        Constructor.prototype.test = function () {
-            var returnValue, testName, testValue;
-
-            testName = 'cookiesCT';
-            testValue = 'data';
-
-            this.set(testName, testValue);
-
-            if (this.get(testName) === testValue) {
-                this.del(testName);
-                returnValue = true;
-            }
-
-            return returnValue;
-        };
-
-        /**
-         * setOptions - set default options for calls to cookie methods
-         *
-         * @access public
-         * @param Object options - list of cookie options to specify
-         * @return void
-         */
-        Constructor.prototype.setOptions = function (options) {
-            if (typeof options !== 'object') {
-                options = null;
-            }
-
-            defaultOptions = resolveOptions(options);
-        };
-
-        return new Constructor();
     }());
 }(window));
