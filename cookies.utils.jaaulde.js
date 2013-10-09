@@ -368,7 +368,7 @@
              */
             test: function () {
                 var r = false,
-                    n = 'cookiesCT',
+                    n = 'test_cookies_utils_jaaulde_js',
                     v = 'data';
 
                 this.set(n, v);
