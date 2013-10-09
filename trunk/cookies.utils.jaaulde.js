@@ -1,63 +1,85 @@
-/*jslint regexp: true, browser: true */
+/*jslint browser: true */
+
 /**
- * jaaulde.cookies.js
+ * cookies.utils.jaaulde.js
  *
- * Copyright (c) 2005 - 2012, James Auldridge
+ * Copyright (c) 2005 - 2013, James Auldridge (auldridgej@gmail.com)
  * All rights reserved.
  *
  * Licensed under the BSD, MIT, and GPL (your choice!) Licenses:
  *   @link http://code.google.com/p/cookies/wiki/License
  *
  */
+
+/**
+ *
+ * @param {type} global reference to global scope
+ * @returns {void}
+ */
 (function (global) {
     "use strict";
 
-        /* localize globals */
+        /* localize natives */
     var document = global.document,
         Object = global.Object,
-        JSON = global.JSON,
-        /* localize first party support */
-        jaaulde = global.jaaulde = (global.jaaulde || {});
+        String = global.String,
+        Date = global.Date,
+        RegExp = global.RegExp,
+        Error = global.Error,
+        JSON = global.JSON;
 
-    /* jaaulde.utils Namespace */
-    jaaulde.utils = (jaaulde.utils || {});
+    /* ensure jaaulde namespace exists */
+    global.jaaulde = (global.jaaulde || {});
+    /* ensure utils namespace exists */
+    global.jaaulde.utils = (global.jaaulde.utils || {});
 
-    /* The library */
-    jaaulde.utils.cookies = (function () {
-        var defaultOptions,
+    /* what we came here to build: */
+    global.jaaulde.utils.cookies = (function () {
+        var default_options,
             resolveOptions,
             cookieOptions,
             isNaN,
             trim,
             parseCookies;
 
-        defaultOptions = {
-            expiresAt: null,
+        default_options = {
+            expires_at: null,
             path: '/',
             domain: null,
             secure: false
         };
 
+        /**
+         *
+         * @param {object} o
+         * @returns {object}
+         */
         resolveOptions = function (o) {
             var r,
                 e;
 
             if (typeof o !== 'object' || o === null) {
-                r = defaultOptions;
+                r = default_options;
             } else {
                 r = {
-                    expiresAt: defaultOptions.expiresAt,
-                    path: defaultOptions.path,
-                    domain: defaultOptions.domain,
-                    secure: defaultOptions.secure
+                    expires_at: default_options.expires_at,
+                    path: default_options.path,
+                    domain: default_options.domain,
+                    secure: default_options.secure
                 };
 
-                if (typeof o.expiresAt === 'object' && o.expiresAt instanceof Date) {
-                    r.expiresAt = o.expiresAt;
+                /*
+                 * I've been very finicky about the name and format of the expiration option over time,
+                 * so I'm accounting for older styles to maintain backwards compatibility
+                 */
+                if (typeof o.expires_at === 'object' && o.expires_at instanceof Date) {
+                    r.expires_at = o.expires_at;
+                } else if (typeof o.expiresAt === 'object' && o.expiresAt instanceof Date) {
+                    r.expires_at = o.expiresAt;
                 } else if (typeof o.hoursToLive === 'number' && o.hoursToLive !== 0) {
-                    e = new global.Date();
+                    e = new Date();
                     e.setTime(e.getTime() + (o.hoursToLive * 60 * 60 * 1000));
-                    r.expiresAt = e;
+                    r.expires_at = e;
                 }
 
                 if (typeof o.path === 'string' && o.path !== '') {
@@ -76,21 +98,31 @@
             return r;
         };
 
+        /**
+         *
+         * @param {object} o
+         * @returns {string}
+         */
         cookieOptions = function (o) {
             o = resolveOptions(o);
 
-            return (
-                (typeof o.expiresAt === 'object' && o.expiresAt instanceof Date ? '; expires=' + o.expiresAt.toGMTString() : '') +
-                '; path=' + o.path +
-                (typeof o.domain === 'string' ? '; domain=' + o.domain : '') +
+            return ([
+                (typeof o.expires_at === 'object' && o.expires_at instanceof Date ? '; expires=' + o.expires_at.toGMTString() : ''),
+                ('; path=' + o.path),
+                (typeof o.domain === 'string' ? '; domain=' + o.domain : ''),
                 (o.secure === true ? '; secure' : '')
-            );
+            ].join(''));
         };
 
         /* Some logic for `trim` and `isNaN` borrowed from http://jquery.com/ */
-        if (global.String.prototype.trim) {
+        if (String.prototype.trim) {
+            /**
+             *
+             * @param {string} s
+             * @returns {string}
+             */
             trim = function (s) {
-                return global.String.prototype.trim.call(s);
+                return String.prototype.trim.call(s);
             };
         } else {
             trim = (function () {
@@ -100,6 +132,11 @@
                 l = /^\s+/;
                 r = /\s+$/;
 
+                /**
+                 *
+                 * @param {string} s
+                 * @returns {string}
+                 */
                 return function (s) {
                     return s.replace(l, '').replace(r, '');
                 };
@@ -108,10 +145,15 @@
 
         isNaN = (function () {
             var p = /\d/,
-                isNaN = global.isNaN;
+                native_isNaN = global.isNaN;
 
+            /**
+             *
+             * @param {mixed} v
+             * @returns {boolean}
+             */
             return function (v) {
-                return (v === null || !p.test(v) || isNaN(v));
+                return (v === null || !p.test(v) || native_isNaN(v));
             };
         }());
 
@@ -143,7 +185,7 @@
                 };
             }
 
-            p = /^(?:\{.*\}|\[.*\])$/;
+            p = new RegExp('^(?:\\{.*\\}|\\[.*\\])$');
 
             return function () {
                 var c = {},
@@ -155,7 +197,7 @@
                     v,
                     vv;
 
-                for (i = 0; i < q; i = i + 1) {
+                for (i = 0; i < q; i += 1) {
                     s2 = s1[i].split('=');
 
                     n = trim(s2.shift());
@@ -178,7 +220,7 @@
                                 ? false : !isNaN(vv)
                                     ? parseFloat(vv) : p.test(vv)
                                         ? parseJSON(vv) : vv;
-                    } catch (e3) {}
+                    } catch (ignore) {}
 
                     c[n] = vv;
                 }
@@ -192,8 +234,13 @@
              * get - get one, several, or all cookies
              *
              * @access public
-             * @paramater Mixed n - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
-             * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
+             * @static
+             * @param {mixed} n {string} name of single cookie
+             *                  {array} list of multiple cookie names
+             *                  {void} if you want all cookies
+             * @return {mixed} type/value of cookie as set
+             *                 {null} if only one cookie is requested and is not found
+             *                 {object} hash of multiple or all cookies (if multiple or all requested)
              */
             get: function (n) {
                 var r,
@@ -224,8 +271,9 @@
              * filter - get array of cookies whose names match the provided RegExp
              *
              * @access public
-             * @paramater Object RegExp p - The regular expression to match against cookie names
-             * @return Mixed - Object:hash of cookies whose names match the RegExp
+             * @static
+             * @param {RegExp} p The regular expression to match against cookie names
+             * @return {object} hash of cookies whose names match the RegExp
              */
             filter: function (p) {
                 var n,
@@ -248,10 +296,12 @@
              * set - set or delete a cookie with desired options
              *
              * @access public
-             * @paramater String n - name of cookie to set
-             * @paramater Mixed v - Any JS value. If not a string, will be JSON encoded (http://code.google.com/p/cookies/wiki/JSON); NULL to delete
-             * @paramater Object o - optional list of cookie options to specify
-             * @return void
+             * @static
+             * @param {string} n name of cookie to set
+             * @param {mixed} v Any JS value. If not a string, will be JSON encoded (http://code.google.com/p/cookies/wiki/JSON)
+             *                  {null} to delete
+             * @param {object} o optional list of cookie options to specify
+             * @return {void}
              */
             set: function (n, v, o) {
                 if (typeof o !== 'object' || o === null) {
@@ -272,7 +322,7 @@
                         if (typeof JSON === 'object' && JSON !== null && typeof JSON.stringify === 'function') {
                             v = JSON.stringify(v);
                         } else {
-                            throw new Error('cookies.set() received value which could not be serialized.');
+                            throw new Error('cookies.set() could not be serialize the value');
                         }
                     }
                 }
@@ -283,9 +333,11 @@
              * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
              *
              * @access public
-             * @paramater Mixed n - String name of cookie to delete, or Bool true to delete all
-             * @paramater Object o - optional list of cookie options to specify ( path, domain )
-             * @return void
+             * @static
+             * @param {mixed} n {string} name of cookie to delete
+             *                  {boolean} true to delete all
+             * @param {object} o optional list of cookie options to specify (path, domain)
+             * @return {void}
              */
             del: function (n, o) {
                 var d = {},
@@ -311,7 +363,8 @@
              * test - test whether the browser is accepting cookies
              *
              * @access public
-             * @return Boolean
+             * @static
+             * @return {boolean}
              */
             test: function () {
                 var r = false,
@@ -331,15 +384,16 @@
              * setOptions - set default options for calls to cookie methods
              *
              * @access public
-             * @param Object o - list of cookie options to specify
-             * @return void
+             * @static
+             * @param {object} o list of cookie options to specify
+             * @return {void]
              */
             setOptions: function (o) {
                 if (typeof o !== 'object') {
                     o = null;
                 }
 
-                defaultOptions = resolveOptions(o);
+                default_options = resolveOptions(o);
             }
         };
     }());
