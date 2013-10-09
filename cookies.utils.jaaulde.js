@@ -386,7 +386,7 @@
              * @access public
              * @static
              * @param {object} o list of cookie options to specify
-             * @return {void]
+             * @return {void}
              */
             setOptions: function (o) {
                 if (typeof o !== 'object') {
