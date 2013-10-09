@@ -5,7 +5,7 @@
 		<script type="text/javascript" src="../externals/json/json2.js"></script>
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
 		<!-- script type="text/javascript" src="jquery.cookies.2.2.0.js"></script -->
-		<script type="text/javascript" src="jaaulde.cookies.js"></script>
+		<script type="text/javascript" src="cookies.utils.jaaulde.js"></script>
 		<script type="text/javascript" src="jquery.cookies.js"></script>
 	</head>
 	<body>
@@ -29,13 +29,13 @@
 						</select>
 					</p>
 					<p id="testCookifyParagraph"></p>
-					
+
 					<p><input type="text" name="testCookieFillInput" id="testCookieFillInput" value="" /></p>
 					<p><input type="checkbox" name="testCookiFillCheckboxC" id="testCookiFillCheckboxC" value="Value for cookie fill checkbox check" /></p>
 					<p><input type="checkbox" name="testCookiFillCheckboxU" id="testCookiFillCheckboxU" value="Value for cookie fill checkbox uncheck" checked="checked" /></p>
 					<p><input type="radio" name="testCookiFillRadioC" id="testCookiFillRadioC" value="Value for cookie fill radio check" /></p>
 					<p><input type="radio" name="testCookiFillRadioU" id="testCookiFillRadioU" value="Value for cookie fill radio uncheck" checked="checked" /></p>
-					
+
 					<p><input type="radio" name="testCookiFillRadioM" id="testCookiFillRadioM1" value="Value for cookie fill radio many 1" checked="checked" /></p>
 					<p><input type="radio" name="testCookiFillRadioM" id="testCookiFillRadioM2" value="Value for cookie fill radio many 2" /></p>
 					<p><input type="radio" name="testCookiFillRadioM" id="testCookiFillRadioM3" value="Value for cookie fill radio many 3" /></p>
@@ -227,7 +227,7 @@
 				$('#testCookifySelect').val('1').cookify();
 				fireunit.compare('1', $.cookies.get('testCookifySelect'), 'Does cookify() method set correct value on a select?');
 				$.cookies.del('testCookifySelect');
-				
+
 				$('#testCookifyParagraph').html('Value for cookify paragraph').cookify();
 				fireunit.compare('Value for cookify paragraph', $.cookies.get('testCookifyParagraph'), 'Does cookify() method set correct value on a paragraph?');
 				$.cookies.del('testCookifyParagraph');
