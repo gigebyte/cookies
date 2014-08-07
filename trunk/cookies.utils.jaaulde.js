@@ -1,4 +1,4 @@
-/*jslint browser: true */
+/*jslint */
 
 /**
  * cookies.utils.jaaulde.js
@@ -13,11 +13,11 @@
 
 /**
  *
- * @param {type} global reference to global scope
+ * @param {object} reference to global scope
  * @returns {void}
  */
 (function (global) {
-    "use strict";
+    'use strict';
 
         /* localize natives */
     var document = global.document,
@@ -35,12 +35,22 @@
 
     /* what we came here to build: */
     global.jaaulde.utils.cookies = (function () {
-        var default_options,
+        var warn,
+            default_options,
             resolveOptions,
             cookieOptions,
             isNaN,
             trim,
             parseCookies;
+
+        warn = function (msg) {
+            if (typeof global.console === 'object' && global.console !== null && typeof global.console.warn === 'function') {
+                warn = function (msg) {
+                    global.console.warn('jaaulde.utils.cookies says: ' + msg);
+                };
+                warn(msg);
+            }
+        };
 
         default_options = {
             expires_at: null,
@@ -70,16 +80,19 @@
 
                 /*
                  * I've been very finicky about the name and format of the expiration option over time,
-                 * so I'm accounting for older styles to maintain backwards compatibility
+                 * so I'm accounting for older styles to maintain backwards compatibility. Preferably it
+                 * will be called expires_at and will be an instance of Date
                  */
                 if (typeof o.expires_at === 'object' && o.expires_at instanceof Date) {
                     r.expires_at = o.expires_at;
                 } else if (typeof o.expiresAt === 'object' && o.expiresAt instanceof Date) {
                     r.expires_at = o.expiresAt;
+                    warn('Cookie option "expiresAt" has been deprecated. Rename to "expires_at". Support for "expiresAt" will be removed in the next version.');
                 } else if (typeof o.hoursToLive === 'number' && o.hoursToLive !== 0) {
                     e = new Date();
                     e.setTime(e.getTime() + (o.hoursToLive * 60 * 60 * 1000));
                     r.expires_at = e;
+                    warn('Cookie option "hoursToLive" has been deprecated in favor of "expires_at" (see documentation). Support for "hoursToLive" will be removed in the next version.');
                 }
 
                 if (typeof o.path === 'string' && o.path !== '') {
@@ -310,7 +323,8 @@
 
                 if (v === undefined || v === null) {
                     v = '';
-                    o.hoursToLive = -8760;
+                    o.expires_at = new Date();
+                    o.expires_at.setFullYear(1978);
                 } else {
                     /* Logic borrowed from http://jquery.com/ dataAttr method and reversed */
                     v = (v === true)
@@ -397,4 +411,4 @@
             }
         };
     }());
-}(window));
+}(this));
