@@ -1,3 +1,5 @@
+/*jslint */
+
 /**
  * jquery.cookies.js
  *
@@ -8,231 +10,210 @@
  *    @link http://code.google.com/p/cookies/wiki/License
  *
  */
-( function( global )
-{
-    "use strict";
+(function (global) {
+    'use strict';
 
-        /* localize 3rd party support */
+        /* localize vendor support */
     var $ = global.jQuery,
-        /* localize first party support */
         jaaulde = global.jaaulde,
         cookies = jaaulde.utils.cookies,
         /* declarations */
-        NameTokenAttrResolver;
+        NameTokenIterator;
 
     /* alias cookies lib under jQ to meet general audience expectations */
     $.cookies = cookies;
 
-    NameTokenAttrResolver = function()
-    {
-        var nameTokenAttrs = ['name', 'id'];
+    NameTokenIterator = function () {
+        var name_token_attrs = [
+            'name',
+            'id'
+        ];
+
         this.current = null;
-        this.nextAttrName = function()
-        {
-            this.current = nameTokenAttrs.shift();
-            return !! this.current;
+
+        this.next = function () {
+            this.current = name_token_attrs.shift();
+
+            return !!this.current;
         };
     };
 
-    $.each( {
+    $.extend($.fn, {
         /**
-         * $( 'selector' ).cookify - set the value of an input field, or the innerHTML of an element, to a cookie by the name or id of the field or element
+         * $('selector').cookify - set the value of an input field, or the innerHTML of an element, to a cookie by the name or id of the field or element
          *                           (field or element MUST have name or id attribute)
          *
          * @access public
          * @param options OBJECT - list of cookie options to specify
          * @return jQuery
          */
-        cookify: function( options )
-        {
-             this
-                .not( ':input' )
-                    /*
-                        Iterate non input elements
-                    */
-                    .each( function()
-                    {
-                        var $this, NTAR, nameToken, value;
+        cookify: function (options) {
+            var inputs = this.filter(':input');
 
-                        $this = $( this );
+            /*
+             * Iterate radio inputs
+             */
+            inputs.filter(':radio').each(function () {});
 
-                        NTAR = new NameTokenAttrResolver();
+            /*
+             * Iterate checkbox inputs
+             */
+            inputs.filter(':checkbox').each(function () {});
 
-                        while( NTAR.nextAttrName() )
-                        {
-                            nameToken = $this.attr( NTAR.current );
-                            if( typeof nameToken === 'string' && nameToken !== '' )
-                            {
-                                value = $this.html();
+            /*
+             * Iterate all other inputs
+             */
+            inputs.not(':radio, :checkbox').each(function () {
+                var $this,
+                    nti,
+                    name_token,
+                    value;
 
-                                cookies.set(
-                                    nameToken,
-                                    ( typeof value === 'string' && value !== '' ) ? value : null,
-                                    options
-                                );
+                $this = $(this);
 
-                                break;
-                            }
-                        }
-                    } )
-                    .end()
-                .filter( ':input')
-                    .filter( ':radio' )
-                    /*
-                        Iterate radio inputs
-                    */
-                    .each( function()
-                    {
+                nti = new NameTokenIterator();
 
-                    } )
-                    .end()
-                .filter( ':checkbox' )
-                /*
-                    Iterate checkbox inputs
-                */
-                .each( function()
-                {
+                while (nti.next()) {
+                    name_token = $this.attr(nti.current);
 
-                } )
-                .end()
-            .not( ':radio, :checkbox' )
-                /*
-                    Iterate all other inputs
-                */
-                .each( function()
-                {
-                    var $this, NTAR, nameToken, value;
+                    if (typeof name_token === 'string' && name_token !== '') {
+                        value = $this.val();
 
-                    $this = $( this );
+                        cookies.set(
+                            name_token,
+                            (typeof value === 'string' && value !== '') ? value : null,
+                            options
+                        );
 
-                    NTAR = new NameTokenAttrResolver();
-
-                    while( NTAR.nextAttrName() )
-                    {
-                        nameToken = $this.attr( NTAR.current );
-                        if( typeof nameToken === 'string' && nameToken !== '' )
-                        {
-                            value = $this.val();
-
-                            cookies.set(
-                                nameToken,
-                                ( typeof value === 'string' && value !== '' ) ? value : null,
-                                options
-                            );
-
-                            break;
-                        }
+                        break;
                     }
-                } );
+                }
+            });
 
-                return this;
-        },
-        /**
-         * $( 'selector' ).cookieFill - set the value of an input field or the innerHTML of an element from a cookie by the name or id of the field or element
-         *
-         * @access public
-         * @return jQuery
-         */
-        cookieFill: function()
-        {
-            this
-                .not( ':input' )
-                    /*
-                        Iterate non input elements
-                    */
-                    .each( function()
-                    {
-                        var $this, NTAR, nameToken, value;
+            /*
+             * Iterate non-input elements
+             */
+            this.not(':input').each(function () {
+                var $this,
+                    nti,
+                    name_token,
+                    value;
 
-                        $this = $( this );
+                $this = $(this);
 
-                        NTAR = new NameTokenAttrResolver();
+                nti = new NameTokenIterator();
 
-                        while( NTAR.nextAttrName() )
-                        {
-                            nameToken = $this.attr( NTAR.current );
-                            if( typeof nameToken === 'string' && nameToken !== '' )
-                            {
-                                value = cookies.get( nameToken );
-                                if( value !== null )
-                                {
-                                    $this.html( value );
-                                }
+                while (nti.next()) {
+                    name_token = $this.attr(nti.current);
 
-                                break;
-                            }
-                        }
-                    } )
-                    .end()
-                .filter( ':input')
-                    .filter( ':radio' )
-                        /*
-                            Iterate radio inputs
-                        */
-                        .each( function()
-                        {
+                    if (typeof name_token === 'string' && name_token !== '') {
+                        value = $this.html();
 
-                        } )
-                        .end()
-                    .filter( ':checkbox' )
-                        /*
-                            Iterate checkbox inputs
-                        */
-                        .each( function()
-                        {
+                        cookies.set(
+                            name_token,
+                            (typeof value === 'string' && value !== '') ? value : null,
+                            options
+                        );
 
-                        } )
-                        .end()
-                    .not( ':radio, :checkbox' )
-                        /*
-                            Iterate all other inputs
-                        */
-                        .each( function()
-                        {
-                            var $this, NTAR, nameToken, value;
-
-                            $this = $( this );
-
-                            NTAR = new NameTokenAttrResolver();
-
-                            while( NTAR.nextAttrName() )
-                            {
-                                nameToken = $this.attr( NTAR.current );
-                                if( typeof nameToken === 'string' && nameToken !== '' )
-                                {
-                                    value = cookies.get( nameToken );
-                                    if( value !== null )
-                                    {
-                                        $this.val( value );
-                                    }
-
-                                    break;
-                                }
-                            }
-                        } );
+                        break;
+                    }
+                }
+            });
 
             return this;
         },
         /**
-         * $( 'selector' ).cookieBind - call cookie fill on matching elements, and bind their change events to cookify()
+         * $('selector').cookieFill - set the value of an input field or the innerHTML of an element from a cookie by the name or id of the field or element
+         *
+         * @access public
+         * @return jQuery
+         */
+        cookieFill: function () {
+            var inputs = this.filter(':input');
+
+            /*
+             * Iterate radio inputs
+             */
+            inputs.filter(':radio').each(function () {});
+
+            /*
+             * Iterate checkbox inputs
+             */
+            inputs.filter(':checkbox').each(function () {});
+
+            /*
+             * Iterate all other inputs
+             */
+            inputs.not(':radio, :checkbox').each(function () {
+                var $this,
+                    nti,
+                    name_token,
+                    value;
+
+                $this = $(this);
+
+                nti = new NameTokenIterator();
+
+                while (nti.next()) {
+                    name_token = $this.attr(nti.current);
+
+                    if (typeof name_token === 'string' && name_token !== '') {
+                        value = cookies.get(name_token);
+
+                        if (value !== null) {
+                            $this.val(value);
+                        }
+
+                        break;
+                    }
+                }
+            });
+
+            /*
+             * Iterate non input elements
+             */
+            this.not(':input').each(function () {
+                var $this,
+                    nti,
+                    name_token,
+                    value;
+
+                $this = $(this);
+
+                nti = new NameTokenIterator();
+
+                while (nti.next()) {
+                    name_token = $this.attr(nti.current);
+
+                    if (typeof name_token === 'string' && name_token !== '') {
+                        value = cookies.get(name_token);
+
+                        if (value !== null) {
+                            $this.html(value);
+                        }
+
+                        break;
+                    }
+                }
+            });
+
+            return this;
+        },
+        /**
+         * $('selector').cookieBind - call cookie fill on matching elements, and bind their change events to cookify()
          *
          * @access public
          * @param options OBJECT - list of cookie options to specify
          * @return jQuery
          */
-        cookieBind: function( options )
-        {
-            return this.each( function()
-            {
-                var $this = $( this );
-                $this.cookieFill().change( function()
-                {
-                    $this.cookify( options );
-                } );
-            } );
+        cookieBind: function (options) {
+            return this.each(function () {
+                var $this = $(this);
+
+                $this.cookieFill().on('change', function () {
+                    $this.cookify(options);
+                });
+            });
         }
-    }, function( i )
-    {
-        $.fn[i] = this;
-    } );
-}( window ) );
+    });
+}(this));
